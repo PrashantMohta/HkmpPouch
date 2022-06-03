@@ -4,8 +4,8 @@ using Hkmp.Networking.Packet.Data;
 
 namespace HkmpPouch{
     public class Client : ClientAddon {
-        internal static Client Instance;
-        internal IClientApi clientApi;
+        public static Client Instance;
+        public IClientApi clientApi;
         internal event EventHandler<RecievedEventArgs> OnRecieve;
 
         public Client() {
@@ -40,7 +40,7 @@ namespace HkmpPouch{
             netReceiver.RegisterPacketHandler<GenericPacket>(
                 Packets.GenericPacket,
                 packetData => {
-                    Modding.Logger.LogDebug("Client recieve |  " + packetData.eventName + $"[{packetData.eventData}]");
+                    Modding.Logger.LogDebug($"Client recieve |  {packetData.mod} : {packetData.eventName} [{packetData.eventData}]");
                     //broadcast event to all client addons
                     OnRecieve?.Invoke(this,new RecievedEventArgs{
                         packet = packetData

@@ -5,9 +5,8 @@ using System.Linq;
 
 namespace HkmpPouch{
     public class Server : ServerAddon {
-
-        internal static Server Instance;
-        internal IServerApi serverApi;
+        public static Server Instance;
+        public IServerApi serverApi;
         internal event EventHandler<RecievedEventArgs> OnRecieve;
         
         public Server() {

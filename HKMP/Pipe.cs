@@ -7,12 +7,17 @@ namespace HkmpPouch{
         public string mod;
         public bool isServer;
         public event EventHandler<RecievedEventArgs> OnRecieve;
+
+        private bool isListening = false;
         public HkmpPipe(string mod,bool isServer){
             this.mod = mod;
             this.isServer = isServer;
+            HkmpPouch.OnReady += (_,E) => startListening();
         }
 
         public void startListening(){
+            if(isListening) {return;}
+
             if(isServer){
                 // register for server events
                 Server.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
@@ -20,6 +25,7 @@ namespace HkmpPouch{
                 // register for client events
                 Client.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
             }
+            isListening = true;
         }
 
         internal void handleRecieve(GenericPacket p){

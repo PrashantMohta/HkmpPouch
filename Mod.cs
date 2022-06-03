@@ -7,7 +7,10 @@ namespace HkmpPouch
 
         new public string GetName() => Constants.Name;
         public override string GetVersion() => Constants.Version;
-        public HkmpPouch Instance;
+
+        public static event EventHandler<EventArgs> OnReady;
+
+        public static HkmpPouch Instance;
         public static ClientAddon client;
         public static ServerAddon server;
         private static void RegisterAddons(){
@@ -19,6 +22,7 @@ namespace HkmpPouch
                 server = new Server();
                 ServerAddon.RegisterAddon(server);
             }
+            OnReady?.Invoke(HkmpPouch.Instance,new EventArgs());
         }
         public override void Initialize()
         {
