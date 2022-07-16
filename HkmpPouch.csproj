@@ -111,6 +111,8 @@
     <Compile Include="Mod.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="HKMP\*.cs" />
+    <Compile Include="HKMP\Data\*.cs" />
+    <Compile Include="HKMP\Data\*\*.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

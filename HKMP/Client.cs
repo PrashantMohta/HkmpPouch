@@ -34,6 +34,7 @@ namespace HkmpPouch{
         }
  
         public override void Initialize(IClientApi _clientApi){
+            
             this.clientApi = _clientApi;
             var netReceiver = clientApi.NetClient.GetNetworkReceiver<Packets>(Instance, InstantiatePacket);
 
@@ -47,6 +48,7 @@ namespace HkmpPouch{
                     });
                 }
             );
+            HkmpPouch.Ready();
         }
 
         protected override string Name => Constants.Name;
