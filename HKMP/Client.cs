@@ -9,13 +9,14 @@ namespace HkmpPouch{
         internal event EventHandler<RecievedEventArgs> OnRecieve;
 
         public Client() {
+            LoadSettings();
             Instance = this;
         }
         internal void send(ushort fromPlayer,ushort toPlayer,string _mod,string _eventName,string _eventData,bool _rebroadcast = false, bool _broadcastToAll = false ,bool _reliable = false,bool sameScene = false){
             if(!clientApi.NetClient.IsConnected){
                 return;
             }
-            Modding.Logger.LogDebug("client send" + _eventName);
+            Platform.LogDebug($"{_mod} Client send {_eventName} | {_eventData}");
             var netSender = clientApi.NetClient.GetNetworkSender<Packets>(Instance);
 
             // SendCollectionData using the given packet ID
@@ -40,13 +41,15 @@ namespace HkmpPouch{
             netReceiver.RegisterPacketHandler<GenericPacket>(
                 Packets.GenericPacket,
                 packetData => {
-                    Modding.Logger.LogDebug($"Client recieve |  {packetData.mod} : {packetData.eventName} [{packetData.eventData}]");
+                    Platform.LogDebug($"{packetData.mod} Client recieve {packetData.eventName} | {packetData.eventData}");
                     //broadcast event to all client addons
                     OnRecieve?.Invoke(this,new RecievedEventArgs{
                         packet = packetData
                     });
                 }
             );
+            HkmpPouch.Ready();
+            Platform.Log($"Pouch Client Addon Version {Constants.ActualVersion} Ready");
         }
 
         protected override string Name => Constants.Name;
