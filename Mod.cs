@@ -6,7 +6,7 @@ namespace HkmpPouch
     public class HkmpPouch : Mod{
 
         new public string GetName() => Constants.Name;
-        public override string GetVersion() => Constants.Version;
+        public override string GetVersion() => Constants.ActualVersion;
         public static bool isReady = false;
         public static event EventHandler<EventArgs> OnReady;
 

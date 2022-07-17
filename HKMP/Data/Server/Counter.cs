@@ -1,14 +1,25 @@
+using System.Timers;
 namespace HkmpPouch.PouchDataServer{
 
     public class Counter{
         public string Name;
         public string modName;
         public int Count {get; private set;}
-
+        private bool pendingUpdates = false;
+        private static Timer EventTimer = new Timer(500);
         public Counter(string modName, string name){
             this.Count = 0;
             this.Name = name;
             this.modName = modName;
+            Counter.EventTimer.Elapsed += BatchUpdateClients;
+            Counter.EventTimer.AutoReset = true;
+            Counter.EventTimer.Enabled = true;
+        }
+
+        public void BatchUpdateClients(System.Object source, ElapsedEventArgs e){
+            if(!pendingUpdates){ return;}
+            UpdateClients();
+            pendingUpdates = false;
         }
 
         public void UpdateClients(){
@@ -21,12 +32,12 @@ namespace HkmpPouch.PouchDataServer{
         }
         public void Increment(ushort value){
             this.Count += value;
-            UpdateClients();
+            this.pendingUpdates = true;
         }
 
         public void Decrement(ushort value){
             this.Count -= value;
-            UpdateClients();
+            this.pendingUpdates = true;
         }
     }
 }
