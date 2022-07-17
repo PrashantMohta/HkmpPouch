@@ -1,6 +1,29 @@
 using System.IO;
 namespace HkmpPouch{
     public static class Platform{
+
+        private static bool _isServer = true,_serverChecked = false;
+
+        private static bool CheckIfClient(){
+            return typeof(UnityEngine.GameObject) != null;
+        }
+
+        /// <summary>
+        /// check if the mod is running on server or client
+        /// </summary>
+        /// <returns></returns>
+        public static bool isServer(){
+            if(!_serverChecked){ 
+                try{
+                    CheckIfClient();
+                    _isServer = false;
+                } catch {
+                    _isServer = true;
+                }
+                _serverChecked = true;
+            }
+            return _isServer;
+        }
         
         private static void LogServer(string message){
             if(currentSettings.enableLogging){
@@ -13,19 +36,28 @@ namespace HkmpPouch{
         private static void LogDebugMapi(string message){
             HkmpPouch.Instance.LogDebug(message);
         }
+
+        /// <summary>
+        /// Log general messages
+        /// </summary>
+        /// <param name="message"></param>
         public static void Log(string message){
-            try{
-                LogMapi(message);
-            } catch (Exception e){
+            if(isServer()){
                 LogServer($"[INFO] {message}");
+            } else {
+                LogMapi(message);
             }
         }
+        /// <summary>
+        /// Log messages for debugging
+        /// </summary>
+        /// <param name="message"></param>
         public static void LogDebug(string message){
             if(!currentSettings.enableDebugLogging){ return; }
-            try{
-                LogDebugMapi(message);
-            } catch (Exception e){
+            if(isServer()){
                 LogServer($"[DEBUG] {message}");
+            } else {
+                LogDebugMapi(message);
             }
         }
 
