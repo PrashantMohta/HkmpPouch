@@ -16,7 +16,6 @@ namespace HkmpPouch.PouchDataServer{
 
         public void Prune(){
             data = data.Where(item => {
-                Modding.Logger.Log($"{item.value} | {item.ttl} | {(DateTime.Now - item.insertedOn).TotalSeconds}");
                 return (DateTime.Now - item.insertedOn).TotalSeconds < item.ttl;
                 }).ToList();
         }
@@ -45,7 +44,6 @@ namespace HkmpPouch.PouchDataServer{
             if(data.Count == 0){
                 return "";
             }
-             Modding.Logger.Log("list json" + JsonConvert.SerializeObject(data.Select( item => item.value)));
 
             return JsonConvert.SerializeObject(data.Select( item => item.value));
         }
@@ -56,7 +54,7 @@ namespace HkmpPouch.PouchDataServer{
             if(serialisedItems != ""){
                 Server.Instance.send(0,toPlayer,this.modName,AppendOnlyListEvents.GOTALL,$"{this.Name}|{serialisedItems}",false,false,true);
             } else {
-                Modding.Logger.Log("no items to SEND");
+                Platform.LogDebug($"{modName} List {Name} Has no items to send");
             }
         }
         public void UpdateClientsWithLatestData(){

@@ -9,9 +9,17 @@ namespace HkmpPouch.PouchDataServer{
             Server.Instance.OnRecieve += HandleEvent;
         }
         public void HandleEvent(System.Object _, RecievedEventArgs args){
+            
+            if(Counters == null){
+                Counters = new();
+            }
+            if(AppendOnlyLists == null){
+                AppendOnlyLists =  new();
+            }
+
             var packet = args.packet;
             if(packet.mod != modName){ return; }
-            Modding.Logger.LogDebug($"PouchData recieve {packet.eventName} = {packet.eventData}");
+            Platform.LogDebug($"{packet.mod} PouchData recieve {packet.eventName} = {packet.eventData}");
 
             if(packet.eventName == CounterEvents.INCREMENT || packet.eventName == CounterEvents.DECREMENT || packet.eventName == CounterEvents.GET){
                 Counter c;

@@ -11,6 +11,7 @@ namespace HkmpPouch{
         internal event EventHandler<RecievedEventArgs> OnRecieve;
         
         public Server() {
+            LoadSettings();
             Instance = this;
         }
         internal void sendToAll(string _mod,string _eventName,string _eventData,bool _reliable = false){
@@ -26,7 +27,6 @@ namespace HkmpPouch{
             for(var i = 0; i < players.Count ; i++){
                 var player = players.ElementAt(i);
                 if(player.Id != fromPlayer && (!sameScene || sender.CurrentScene == player.CurrentScene)){
-                    //Modding.Logger.LogDebug($"player.CurrentScene {player.CurrentScene}, sender.CurrentScene {sender.CurrentScene}, sameScene {sameScene} ");
                     this.send(fromPlayer,player.Id,_mod,_eventName,_eventData,false,true,_reliable);
                 }
             }
@@ -36,7 +36,7 @@ namespace HkmpPouch{
             /*if(!serverApi.NetServer.IsStarted ){
                 return;
             }*/
-            Modding.Logger.LogDebug("server send" + _eventName);
+            Platform.LogDebug($" {_mod} Server send {_eventName} : {_eventData} to player {toPlayer}");
             var netSender = serverApi.NetServer.GetNetworkSender<Packets>(this);
             // SendCollectionData using the given packet ID
             netSender.SendCollectionData(Packets.GenericPacket, new GenericPacket {
@@ -68,7 +68,7 @@ namespace HkmpPouch{
                 Packets.GenericPacket,
                 (id, packetData) => {
                     packetData.fromPlayer = id; // we just set this here because HKMP does not tell clients their own id for whatever reason.
-                    Modding.Logger.LogDebug($"Server recieve {packetData.eventName} from {id}");
+                    Platform.LogDebug($"{packetData.mod} Server recieve {packetData.eventName} : {packetData.eventData} from player {id}");
 
                     //handle pouch data
                     PouchDataHandler(packetData);
@@ -88,8 +88,8 @@ namespace HkmpPouch{
                     }
                 }
             );
-
-            HkmpPouch.Ready();
+            
+            Platform.Log("Pouch Server Started");
         }
 
 

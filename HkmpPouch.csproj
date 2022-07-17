@@ -110,6 +110,8 @@
     <Compile Include="GlobalUsings.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Platform.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="HKMP\*.cs" />
     <Compile Include="HKMP\Data\*.cs" />
     <Compile Include="HKMP\Data\*\*.cs" />
