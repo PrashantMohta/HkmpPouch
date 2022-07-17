@@ -23,7 +23,8 @@ namespace HkmpPouch.PouchDataServer{
 
             if(packet.eventName == CounterEvents.INCREMENT || packet.eventName == CounterEvents.DECREMENT || packet.eventName == CounterEvents.GET){
                 Counter c;
-                var counterName = packet.eventData;
+                var data = packet.eventData.Split(new Char[] {'|'},2);
+                var counterName = data[0];
                 if(!Counters.TryGetValue(counterName,out c)){
                     c = new Counter(packet.mod,counterName);
                     Counters[counterName] = c;
@@ -32,10 +33,10 @@ namespace HkmpPouch.PouchDataServer{
                     c.UpdateClient(packet.fromPlayer);
                 }
                 if(packet.eventName == CounterEvents.INCREMENT){
-                    c.Increment();
+                    c.Increment(ushort.Parse(data[1]));
                 }
                 if(packet.eventName == CounterEvents.DECREMENT){
-                    c.Decrement();
+                    c.Decrement(ushort.Parse(data[1]));
                 }
             }
             if(packet.eventName == AppendOnlyListEvents.ADD || packet.eventName == AppendOnlyListEvents.GETALL){
@@ -54,7 +55,6 @@ namespace HkmpPouch.PouchDataServer{
                     });
                 }
                 if(packet.eventName == AppendOnlyListEvents.GETALL){
-                    Modding.Logger.Log("WE HAVE THE EVENT ON SERVER");
                     a.UpdateClientWithAllData(packet.fromPlayer);
                 }
             }

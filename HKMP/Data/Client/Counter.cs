@@ -30,14 +30,14 @@ namespace HkmpPouch.PouchDataClient{
         public void Get(){
             this.pipe.Send(0,0,CounterEvents.GET,this.Name,false,false,true,false);
         }
-        public void Increment(){
+        public void Increment(ushort value = 1){
             // send increment command to server
-            this.pipe.Send(0,0,CounterEvents.INCREMENT,this.Name,false,false,true,false);
+            this.pipe.Send(0,0,CounterEvents.INCREMENT,$"{this.Name}|{value}",false,false,true,false);
         }
 
-        public void Decrement(){
+        public void Decrement(ushort value = 1){
             // send decrement command to server
-            this.pipe.Send(0,0,CounterEvents.DECREMENT,this.Name,false,false,true,false);
+            this.pipe.Send(0,0,CounterEvents.DECREMENT,$"{this.Name}|{value}",false,false,true,false);
         }
 
         public void Destroy(){

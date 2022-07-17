@@ -19,13 +19,13 @@ namespace HkmpPouch.PouchDataServer{
         public void UpdateClient(ushort toPlayer){
             Server.Instance.send(0,toPlayer,this.modName,CounterEvents.UPDATE,$"{this.Name}|{this.Count}",false,false,true);
         }
-        public void Increment(){
-            this.Count += 1;
+        public void Increment(ushort value){
+            this.Count += value;
             UpdateClients();
         }
 
-        public void Decrement(){
-            this.Count -= 1;
+        public void Decrement(ushort value){
+            this.Count -= value;
             UpdateClients();
         }
     }
