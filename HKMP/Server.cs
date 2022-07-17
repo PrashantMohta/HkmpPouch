@@ -89,7 +89,7 @@ namespace HkmpPouch{
                 }
             );
             
-            Platform.Log("Pouch Server Started");
+            Platform.Log("Pouch Server Addon Ready");
         }
 
 

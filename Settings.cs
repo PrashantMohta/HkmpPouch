@@ -19,7 +19,7 @@ namespace HkmpPouch{
 
         public static void SaveSettings(){
             var settingsFilePath = Path.Combine(Platform.getCurrentDirectory(),"HkmpPouch.json");
-            File.WriteAllText(settingsFilePath, JsonConvert.SerializeObject(currentSettings));
+            File.WriteAllText(settingsFilePath, JsonConvert.SerializeObject(currentSettings,Formatting.Indented));
         }
     }
 }

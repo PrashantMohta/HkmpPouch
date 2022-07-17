@@ -49,7 +49,7 @@ namespace HkmpPouch{
                 }
             );
             HkmpPouch.Ready();
-            Platform.Log("Pouch Client Ready");
+            Platform.Log("Pouch Client Addon Ready");
         }
 
         protected override string Name => Constants.Name;
