@@ -14,25 +14,25 @@ namespace HkmpPouch{
             LoadSettings();
             Instance = this;
         }
-        internal void sendToAll(string _mod,string _eventName,string _eventData,bool _reliable = false){
+        internal void SendToAll(string _mod,string _eventName,string _eventData,bool _reliable = false){
             var players = serverApi.ServerManager.Players;
             for(var i = 0; i < players.Count ; i++){
                 var player = players.ElementAt(i);
-                this.send(0,player.Id,_mod,_eventName,_eventData,false,true,_reliable);
+                this.Send(0,player.Id,_mod,_eventName,_eventData,false,true,_reliable);
             }
         }
-        internal void sendToAll(ushort fromPlayer,string _mod,string _eventName,string _eventData,bool _reliable = false,bool sameScene = false){
+        internal void SendToAll(ushort fromPlayer,string _mod,string _eventName,string _eventData,bool _reliable = false,bool sameScene = false){
             var players = serverApi.ServerManager.Players;
             var sender = serverApi.ServerManager.GetPlayer(fromPlayer);
             for(var i = 0; i < players.Count ; i++){
                 var player = players.ElementAt(i);
                 if(player.Id != fromPlayer && (!sameScene || sender.CurrentScene == player.CurrentScene)){
-                    this.send(fromPlayer,player.Id,_mod,_eventName,_eventData,false,true,_reliable);
+                    this.Send(fromPlayer,player.Id,_mod,_eventName,_eventData,false,true,_reliable);
                 }
             }
         }
 
-        internal void send(ushort fromPlayer,ushort toPlayer,string _mod,string _eventName,string _eventData,bool _rebroadcast = false , bool _broadcastToAll = false ,bool _reliable = false){
+        internal void Send(ushort fromPlayer,ushort toPlayer,string _mod,string _eventName,string _eventData,bool _rebroadcast = false , bool _broadcastToAll = false ,bool _reliable = false){
             /*if(!serverApi.NetServer.IsStarted ){
                 return;
             }*/
@@ -81,9 +81,9 @@ namespace HkmpPouch{
                     //rebroadcast the packet to all clients 
                     if(packetData.rebroadcast){
                         if(packetData.broadcastToAll){
-                            sendToAll(id,packetData.mod,packetData.eventName,packetData.eventData,packetData._isReliable,packetData.sameScene);
+                            SendToAll(id,packetData.mod,packetData.eventName,packetData.eventData,packetData._isReliable,packetData.sameScene);
                         } else {
-                            send(id,packetData.toPlayer,packetData.mod,packetData.eventName,packetData.eventData,false,packetData._isReliable);
+                            Send(id,packetData.toPlayer,packetData.mod,packetData.eventName,packetData.eventData,false,packetData._isReliable);
                         }
                     }
                 }

@@ -44,7 +44,7 @@ namespace HkmpPouch.PouchDataClient{
             // send getAll command to server
             this.pipe.Send(0,0,AppendOnlyListEvents.GETALL,this.Name,false,false,true,false);
         }
-        public void Destory(){
+        public void Destroy(){
             pipe.OnRecieve -= HandleEvent;
         }
 

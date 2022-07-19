@@ -42,12 +42,12 @@ namespace HkmpPouch{
         public void Send(ushort fromPlayer,ushort toPlayer,string eventName,string eventData,bool rebroadcast = true,bool broadcastToAll = false,bool reliable = true,bool sameScene = false){
             if(isServer){
                 if(broadcastToAll){
-                    Server.Instance.sendToAll(fromPlayer,this.mod,eventName,eventData,reliable,sameScene);
+                    Server.Instance.SendToAll(fromPlayer,this.mod,eventName,eventData,reliable,sameScene);
                 } else {
-                    Server.Instance.send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable);
+                    Server.Instance.Send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable);
                 }
             } else {
-                Client.Instance.send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable,sameScene);
+                Client.Instance.Send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable,sameScene);
             }
         }
     }

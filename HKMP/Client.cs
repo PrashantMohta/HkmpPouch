@@ -12,7 +12,7 @@ namespace HkmpPouch{
             LoadSettings();
             Instance = this;
         }
-        internal void send(ushort fromPlayer,ushort toPlayer,string _mod,string _eventName,string _eventData,bool _rebroadcast = false, bool _broadcastToAll = false ,bool _reliable = false,bool sameScene = false){
+        internal void Send(ushort fromPlayer,ushort toPlayer,string _mod,string _eventName,string _eventData,bool _rebroadcast = false, bool _broadcastToAll = false ,bool _reliable = false,bool sameScene = false){
             if(!clientApi.NetClient.IsConnected){
                 return;
             }
