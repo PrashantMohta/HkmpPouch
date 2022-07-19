@@ -6,7 +6,7 @@ namespace HkmpPouch{
     public class Client : ClientAddon {
         public static Client Instance;
         public IClientApi clientApi;
-        internal event EventHandler<RecievedEventArgs> OnRecieve;
+        internal event EventHandler<ReceivedEventArgs> OnReceive;
 
         public Client() {
             LoadSettings();
@@ -41,9 +41,9 @@ namespace HkmpPouch{
             netReceiver.RegisterPacketHandler<GenericPacket>(
                 Packets.GenericPacket,
                 packetData => {
-                    Platform.LogDebug($"{packetData.mod} Client recieve {packetData.eventName} | {packetData.eventData}");
+                    Platform.LogDebug($"{packetData.mod} Client receive {packetData.eventName} | {packetData.eventData}");
                     //broadcast event to all client addons
-                    OnRecieve?.Invoke(this,new RecievedEventArgs{
+                    OnReceive?.Invoke(this,new ReceivedEventArgs{
                         packet = packetData
                     });
                 }

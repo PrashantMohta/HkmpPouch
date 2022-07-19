@@ -8,7 +8,7 @@ namespace HkmpPouch{
     public class Server : ServerAddon {
         public static Server Instance;
         public IServerApi serverApi;
-        internal event EventHandler<RecievedEventArgs> OnRecieve;
+        internal event EventHandler<ReceivedEventArgs> OnReceive;
         
         public Server() {
             LoadSettings();
@@ -68,13 +68,13 @@ namespace HkmpPouch{
                 Packets.GenericPacket,
                 (id, packetData) => {
                     packetData.fromPlayer = id; // we just set this here because HKMP does not tell clients their own id for whatever reason.
-                    Platform.LogDebug($"{packetData.mod} Server recieve {packetData.eventName} : {packetData.eventData} from player {id}");
+                    Platform.LogDebug($"{packetData.mod} Server receive {packetData.eventName} : {packetData.eventData} from player {id}");
 
                     //handle pouch data
                     PouchDataHandler(packetData);
 
                     //broadcast the packet to all server addons
-                    OnRecieve?.Invoke(this,new RecievedEventArgs{
+                    OnReceive?.Invoke(this,new ReceivedEventArgs{
                         packet = packetData
                     });
 

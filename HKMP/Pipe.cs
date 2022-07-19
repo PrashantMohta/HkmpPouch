@@ -6,31 +6,31 @@ namespace HkmpPouch{
     public class HkmpPipe{
         public string mod;
         public bool isServer;
-        public event EventHandler<RecievedEventArgs> OnRecieve;
+        public event EventHandler<ReceivedEventArgs> OnReceive;
 
         private bool isListening = false;
         public HkmpPipe(string mod,bool isServer){
             this.mod = mod;
             this.isServer = isServer;
-            HkmpPouch.OnReady += (_,E) => startListening();
+            HkmpPouch.OnReady += (_,E) => StartListening();
         }
 
-        public void startListening(){
+        public void StartListening(){
             if(isListening) {return;}
 
             if(isServer){
                 // register for server events
-                Server.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
+                Server.Instance.OnReceive += (_,R) => HandleReceive(R.packet);
             } else {
                 // register for client events
-                Client.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
+                Client.Instance.OnReceive += (_,R) => HandleReceive(R.packet);
             }
             isListening = true;
         }
 
-        internal void handleRecieve(GenericPacket p){
-            if(p.mod != this.mod) { return; } // only recieve your own mod's events
-            OnRecieve?.Invoke(this,new RecievedEventArgs{
+        internal void HandleReceive(GenericPacket p){
+            if(p.mod != this.mod) { return; } // only receive your own mod's events
+            OnReceive?.Invoke(this,new ReceivedEventArgs{
                 packet = p
             });
         }
