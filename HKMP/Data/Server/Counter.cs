@@ -24,11 +24,11 @@ namespace HkmpPouch.PouchDataServer{
 
         public void UpdateClients(){
             // send updated value to clients
-            Server.Instance.sendToAll(this.modName,CounterEvents.UPDATE,$"{this.Name}|{this.Count}",true);
+            Server.Instance.SendToAll(this.modName,CounterEvents.UPDATE,$"{this.Name}|{this.Count}",true);
         }
 
         public void UpdateClient(ushort toPlayer){
-            Server.Instance.send(0,toPlayer,this.modName,CounterEvents.UPDATE,$"{this.Name}|{this.Count}",false,false,true);
+            Server.Instance.Send(0,toPlayer,this.modName,CounterEvents.UPDATE,$"{this.Name}|{this.Count}",false,false,true);
         }
         public void Increment(ushort value){
             this.Count += value;

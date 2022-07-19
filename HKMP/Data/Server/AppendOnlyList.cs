@@ -61,14 +61,14 @@ namespace HkmpPouch.PouchDataServer{
             var serialisedItems = SerialiseItems();
             
             if(serialisedItems != ""){
-                Server.Instance.send(0,toPlayer,this.modName,AppendOnlyListEvents.GOTALL,$"{this.Name}|{serialisedItems}",false,false,true);
+                Server.Instance.Send(0,toPlayer,this.modName,AppendOnlyListEvents.GOTALL,$"{this.Name}|{serialisedItems}",false,false,true);
             } else {
                 Platform.LogDebug($"{modName} List {Name} Has no items to send");
             }
         }
         public void UpdateClientsWithLatestData(ListItem lastItem){
             if(lastItem != null){
-                Server.Instance.sendToAll(this.modName,AppendOnlyListEvents.ADDED,$"{this.Name}|{lastItem.value}",true);
+                Server.Instance.SendToAll(this.modName,AppendOnlyListEvents.ADDED,$"{this.Name}|{lastItem.value}",true);
             }
         }
     }

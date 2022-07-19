@@ -2,7 +2,7 @@ using Hkmp.Networking.Packet;
 
 namespace HkmpPouch{
     
-    public class RecievedEventArgs : EventArgs {
+    public class ReceivedEventArgs : EventArgs {
         public GenericPacket packet { get; set; }
     }
     public enum Packets {

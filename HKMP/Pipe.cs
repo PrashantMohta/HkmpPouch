@@ -6,31 +6,31 @@ namespace HkmpPouch{
     public class HkmpPipe{
         public string mod;
         public bool isServer;
-        public event EventHandler<RecievedEventArgs> OnRecieve;
+        public event EventHandler<ReceivedEventArgs> OnReceive;
 
         private bool isListening = false;
         public HkmpPipe(string mod,bool isServer){
             this.mod = mod;
             this.isServer = isServer;
-            HkmpPouch.OnReady += (_,E) => startListening();
+            HkmpPouch.OnReady += (_,E) => StartListening();
         }
 
-        public void startListening(){
+        public void StartListening(){
             if(isListening) {return;}
 
             if(isServer){
                 // register for server events
-                Server.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
+                Server.Instance.OnReceive += (_,R) => HandleReceive(R.packet);
             } else {
                 // register for client events
-                Client.Instance.OnRecieve += (_,R) => handleRecieve(R.packet);
+                Client.Instance.OnReceive += (_,R) => HandleReceive(R.packet);
             }
             isListening = true;
         }
 
-        internal void handleRecieve(GenericPacket p){
-            if(p.mod != this.mod) { return; } // only recieve your own mod's events
-            OnRecieve?.Invoke(this,new RecievedEventArgs{
+        internal void HandleReceive(GenericPacket p){
+            if(p.mod != this.mod) { return; } // only receive your own mod's events
+            OnReceive?.Invoke(this,new ReceivedEventArgs{
                 packet = p
             });
         }
@@ -42,12 +42,12 @@ namespace HkmpPouch{
         public void Send(ushort fromPlayer,ushort toPlayer,string eventName,string eventData,bool rebroadcast = true,bool broadcastToAll = false,bool reliable = true,bool sameScene = false){
             if(isServer){
                 if(broadcastToAll){
-                    Server.Instance.sendToAll(fromPlayer,this.mod,eventName,eventData,reliable,sameScene);
+                    Server.Instance.SendToAll(fromPlayer,this.mod,eventName,eventData,reliable,sameScene);
                 } else {
-                    Server.Instance.send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable);
+                    Server.Instance.Send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable);
                 }
             } else {
-                Client.Instance.send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable,sameScene);
+                Client.Instance.Send(fromPlayer,toPlayer,this.mod,eventName,eventData,rebroadcast,broadcastToAll,reliable,sameScene);
             }
         }
     }
