@@ -7,7 +7,7 @@ namespace HkmpPouch
     public class PipeServer
     {
         public string ModName { get; }
-        public IServerApi ClientApi { get => Server.Instance.Api; }
+        public IServerApi ServerApi { get => Server.Instance.Api; }
 
         public event EventHandler<RecievedEventArgs> OnRecieve;
 
