@@ -134,7 +134,7 @@ namespace HkmpPouch
 
         }
 
-        public void Send<TPacketData>(PacketsEnum PacketId, TPacketData PacketData, ushort ToPlayer) where TPacketData : IPacketData, new()
+        internal void Send<TPacketData>(PacketsEnum PacketId, TPacketData PacketData, ushort ToPlayer) where TPacketData : IPacketData, new()
         {
             if (!Api.NetServer.IsStarted)
             {
@@ -147,7 +147,7 @@ namespace HkmpPouch
             NetSender.SendCollectionData(PacketId, PacketData, ToPlayer);
         }
 
-        public void Broadcast(ToPlayersPacket packet) {
+        internal void Broadcast(ToPlayersPacket packet) {
             bool allScenes = packet.sceneName == Constants.AllScenes;
 
             var players = Api.ServerManager.Players;

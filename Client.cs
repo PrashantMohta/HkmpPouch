@@ -52,7 +52,7 @@ namespace HkmpPouch
             OnReady?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Send<TPacketData>(PacketsEnum PacketId,TPacketData PacketData) where TPacketData : IPacketData, new() {
+        internal void Send<TPacketData>(PacketsEnum PacketId,TPacketData PacketData) where TPacketData : IPacketData, new() {
             if (!Api.NetClient.IsConnected)
             {
                 return;
