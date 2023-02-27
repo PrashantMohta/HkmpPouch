@@ -117,7 +117,17 @@ namespace HkmpPouch
                 var player = players.ElementAt(i);
                 if(player.Id != sender.Id && (allScenes || (player.CurrentScene == sender.CurrentScene && sameScene) || player.CurrentScene == packet.sceneName))
                 {
-                    Send<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayerPacket, packet, player.Id);
+                    Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket { 
+                    _isReliable = packet._isReliable,
+                    _dropReliableDataIfNewerExists = packet._dropReliableDataIfNewerExists,
+                    toPlayer = player.Id,
+                    fromPlayer = fromPlayer,
+                    sceneName = packet.sceneName,
+                    mod = packet.mod,
+                    eventData = packet.eventData,
+                    eventName = packet.eventName
+                    
+                    }, player.Id);
                 }
             }
                
