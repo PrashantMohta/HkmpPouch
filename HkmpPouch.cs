@@ -1,12 +1,8 @@
-﻿using Modding;
-using System;
-using System.Collections;
+﻿using Hkmp.Api.Client;
+using Hkmp.Api.Server;
+using Modding;
 using System.Collections.Generic;
 using UnityEngine;
-using UObject = UnityEngine.Object;
-using Hkmp.Api;
-using Hkmp.Api.Client;
-using Hkmp.Api.Server;
 
 namespace HkmpPouch
 {
