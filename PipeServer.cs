@@ -1,4 +1,5 @@
 ﻿using Hkmp.Api.Server;
+using HkmpPouch.Networking;
 using HkmpPouch.Packets;
 using System;
 
@@ -25,18 +26,26 @@ namespace HkmpPouch
         public event EventHandler<ReceivedEventArgs> OnRecieve;
 
         /// <summary>
+        /// The Logger to use
+        /// </summary>
+        public Logger Logger { get; private set; }
+
+        /// <summary>
         /// Create a new PipeServer
         /// </summary>
         /// <param name="ModName">Name of the Mod creating the pipe that is used as a unique identifier for the mod</param>
         public PipeServer(string ModName)
         {
             this.ModName = ModName;
+            this.Logger = new Logger(this.ModName, Server.Instance);
             Server.Instance.OnRecieve += HandleRecieve;
+            Logger.Info("PipeServer Created");
         }
 
         private void HandleRecieve(object sender, ReceivedEventArgs e)
         {
             if (e.Data.ModName != ModName) { return; }
+            Logger.Debug($"Server Received event {e.Data.EventName} = {e.Data.EventData}");
             OnRecieve?.Invoke(this, e);
         }
         /// <summary>
@@ -47,6 +56,8 @@ namespace HkmpPouch
         /// <param name="EventData">Corresponding event data</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToPlayer(ushort ToPlayer, string EventName, string EventData, bool IsReliable = true) {
+
+            Logger.Debug($"Server SendToPlayer {ToPlayer} event {EventName} = {EventData}");
             Server.Instance.Send<ToPlayerPacket>(PacketsEnum.ToPlayerPacket, new ToPlayerPacket {
                 mod = ModName,
                 eventName = EventName,
@@ -71,7 +82,9 @@ namespace HkmpPouch
         /// <param name="EventData">Corresponding event data</param>
         /// <param name="SceneName">Name of the scene to send the data in</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true) {
+        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true)
+        {
+            Logger.Debug($"Server BroadcastInScene {SceneName} event {EventName} = {EventData}");
             Server.Instance.Broadcast(new ToPlayersPacket
             {
                 mod = ModName,

@@ -4,9 +4,9 @@ using Hkmp.Networking.Packet;
 using HkmpPouch.Packets;
 using System;
 
-namespace HkmpPouch
+namespace HkmpPouch.Networking
 {
-    internal class Client : ClientAddon
+    internal class Client : ClientAddon, ILogger
     {
         public override bool NeedsNetwork => true;
 
@@ -27,13 +27,17 @@ namespace HkmpPouch
         public Client() {
             Instance = this;
         }
-        internal void Error(string str)
+        public void Error(string str)
         {
             Logger.Error(str);
         }
-        internal void Info(string str)
+        public void Info(string str)
         {
             Logger.Info(str);
+        }
+        public void Debug(string str)
+        {
+            Logger.Debug(str);
         }
 
         internal void RecieveData(ReceivedData r)

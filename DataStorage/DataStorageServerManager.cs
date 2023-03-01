@@ -1,6 +1,5 @@
 ﻿using HkmpPouch.DataStorage.AppendOnlyList;
 using HkmpPouch.DataStorage.Counter;
-using HkmpPouch.Packets;
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +31,6 @@ namespace HkmpPouch.DataStorage
             }
 
             var packet = args.Data;
-            Server.Instance.Info($"{modName} PouchData recieve {packet.EventName} = {packet.EventData}");
 
             if (packet.EventName == CounterEvents.INCREMENT || packet.EventName == CounterEvents.DECREMENT || packet.EventName == CounterEvents.GET)
             {

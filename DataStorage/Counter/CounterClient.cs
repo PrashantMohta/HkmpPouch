@@ -1,5 +1,4 @@
-﻿using HkmpPouch.Packets;
-using System;
+﻿using System;
 
 namespace HkmpPouch.DataStorage.Counter
 {

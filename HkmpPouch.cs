@@ -1,5 +1,6 @@
 ﻿using Hkmp.Api.Client;
 using Hkmp.Api.Server;
+using HkmpPouch.Networking;
 using Modding;
 using System.Collections.Generic;
 using UnityEngine;

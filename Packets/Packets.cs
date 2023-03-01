@@ -1,6 +1,5 @@
 ﻿using Hkmp.Networking.Packet;
 using Hkmp.Networking.Packet.Data;
-using System;
 
 namespace HkmpPouch.Packets
 {

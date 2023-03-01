@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HkmpPouch
+namespace HkmpPouch.Networking
 {
-    internal class Server : ServerAddon
+    internal class Server : ServerAddon, ILogger
     {
         public override bool NeedsNetwork => true;
 
@@ -32,13 +32,17 @@ namespace HkmpPouch
             Instance = this;
         }
 
-        internal void Error(string str)
+        public void Error(string str)
         {
             Logger.Error(str);
         }
-        internal void Info(string str)
+        public void Info(string str)
         {
             Logger.Info(str);
+        }
+        public void Debug(string str)
+        {
+            Logger.Debug(str);
         }
         internal void RecieveData(ReceivedData r)
         {

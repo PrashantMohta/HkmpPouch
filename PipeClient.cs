@@ -1,10 +1,11 @@
 ﻿using Hkmp.Api.Client;
+using HkmpPouch.Networking;
 using HkmpPouch.Packets;
 using System;
 
 namespace HkmpPouch
 {
-    
+
     /// <summary>
     /// A pipe to send and recieve data on the client side.
     /// </summary>
@@ -26,6 +27,11 @@ namespace HkmpPouch
         /// </summary>
         public event EventHandler<ReceivedEventArgs> OnRecieve;
 
+        /// <summary>
+        /// The Logger to use
+        /// </summary>
+        public Logger Logger { get; private set; }
+
         private bool IsListening = false;
 
         /// <summary>
@@ -35,12 +41,15 @@ namespace HkmpPouch
         public PipeClient(string ModName)
         {
             this.ModName = ModName;
+            this.Logger = new Logger(this.ModName,Client.Instance);
             Client.OnReady += Client_OnReady;
+            Logger.Info("PipeClient Created");
         }
 
         private void Client_OnReady(object sender, EventArgs e)
         {
             if (IsListening) { return; }
+            Logger.Info("Client Ready");
             Client.Instance.OnRecieve += HandleRecieve;
             IsListening = true;
         }
@@ -48,6 +57,7 @@ namespace HkmpPouch
         private void HandleRecieve(object sender, ReceivedEventArgs e)
         {
             if (e.Data.ModName != ModName) { return; }
+            Logger.Debug($"Client Received event {e.Data.EventName} = {e.Data.EventData}");
             OnRecieve?.Invoke(this, e);
         }
 
@@ -58,6 +68,7 @@ namespace HkmpPouch
         /// <param name="EventData">Corresponding event data</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToServer(string EventName,string EventData,bool IsReliable = true) {
+            Logger.Debug($"Client SendToServer event {EventName} = {EventData}");
             Client.Instance.Send<ToServerPacket>(PacketsEnum.ToServerPacket, new ToServerPacket {
                 mod = ModName, 
                 eventName = EventName,
@@ -75,6 +86,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToPlayer(ushort PlayerId, string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
         {
+            Logger.Debug($"Client SendToPlayer {PlayerId} event {EventName} = {EventData}");
             Client.Instance.Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket
             {
                 mod = ModName,
@@ -111,6 +123,8 @@ namespace HkmpPouch
         /// <param name="SceneName">Name of the scene to send the data in</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true) {
+
+            Logger.Debug($"Client BroadcastInScene {SceneName} event {EventName} = {EventData}");
             Client.Instance.Send<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayersPacket, new PlayerToPlayersPacket {
                 mod = ModName,
                 eventName = EventName,
