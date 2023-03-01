@@ -4,13 +4,34 @@ using System;
 
 namespace HkmpPouch
 {
+    
+    /// <summary>
+    /// A pipe to send and recieve data on the client side.
+    /// </summary>
     public class PipeClient
     {
-        public string ModName { get; }
+        /// <summary>
+        /// Name of the Pipe (typically one mod should only require one pipe)
+        /// </summary>
+        public string ModName { get; private set; }
+
+        /// <summary>
+        /// Instance of Hkmp.Api.Client.IClientApi provided by HKMP
+        /// </summary>
         public IClientApi ClientApi { get => Client.Instance.Api; }
 
-        public event EventHandler<RecievedEventArgs> OnRecieve;
+
+        /// <summary>
+        /// An event that fires when new data is recieved on the client
+        /// </summary>
+        public event EventHandler<ReceivedEventArgs> OnRecieve;
+
         private bool IsListening = false;
+
+        /// <summary>
+        /// Create a new PipeClient
+        /// </summary>
+        /// <param name="ModName">Name of the Mod creating the pipe that is used as a unique identifier for the mod</param>
         public PipeClient(string ModName)
         {
             this.ModName = ModName;
@@ -24,40 +45,78 @@ namespace HkmpPouch
             IsListening = true;
         }
 
-        private void HandleRecieve(object sender, RecievedEventArgs e)
+        private void HandleRecieve(object sender, ReceivedEventArgs e)
         {
             if (e.Data.ModName != ModName) { return; }
             OnRecieve?.Invoke(this, e);
         }
 
-        public void SendToServer(string EventName,string EventData) {
-            Client.Instance.Send<ToServerPacket>(PacketsEnum.ToServerPacket, new ToServerPacket { mod = ModName, eventName = EventName,eventData = EventData});
-        }
-        public void SendToPlayer(ushort PlayerId, string EventName, string EventData, bool SameScene = true) {
-            Client.Instance.Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket { 
+        /// <summary>
+        /// Only send event to the server (presumably to be handled by a server side addon)
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void SendToServer(string EventName,string EventData,bool IsReliable = true) {
+            Client.Instance.Send<ToServerPacket>(PacketsEnum.ToServerPacket, new ToServerPacket {
                 mod = ModName, 
-                eventName = EventName, 
+                eventName = EventName,
                 eventData = EventData,
-                toPlayer = PlayerId,
-                sceneName = SameScene ? Constants.SameScenes : Constants.AllScenes
+                _isReliable = IsReliable
             });
         }
-        public void Broadcast(string EventName, string EventData, bool SameScene = true) {
+        /// <summary>
+        /// Send an event to a single player
+        /// </summary>
+        /// <param name="PlayerId">Player Id of the recieving player</param>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void SendToPlayer(ushort PlayerId, string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
+        {
+            Client.Instance.Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket
+            {
+                mod = ModName,
+                eventName = EventName,
+                eventData = EventData,
+                toPlayer = PlayerId,
+                sceneName = SameScene ? Constants.SameScenes : Constants.AllScenes,
+                _isReliable = IsReliable
+            });
+        }
+
+        /// <summary>
+        /// Send an event to many players
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void Broadcast(string EventName, string EventData, bool SameScene = true, bool IsReliable = true) {
             if (SameScene)
             {
-                BroadcastInScene(EventName, EventData, Constants.SameScenes);
+                BroadcastInScene(EventName, EventData, Constants.SameScenes, IsReliable);
             }
             else 
             {
-                BroadcastInScene(EventName, EventData, Constants.AllScenes);
+                BroadcastInScene(EventName, EventData, Constants.AllScenes, IsReliable);
             }
         }
-        public void BroadcastInScene(string EventName, string EventData, string SceneName) {
+        /// <summary>
+        /// Send Event to all the connected Players in a particular scene
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SceneName">Name of the scene to send the data in</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true) {
             Client.Instance.Send<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayersPacket, new PlayerToPlayersPacket {
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
-                sceneName = SceneName
+                sceneName = SceneName,
+                _isReliable = IsReliable
             });
         }
     }

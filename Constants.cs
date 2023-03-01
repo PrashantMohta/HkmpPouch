@@ -1,11 +1,33 @@
 ﻿namespace HkmpPouch
 {
+    /// <summary>
+    /// Defines some constants
+    /// </summary>
     public static class Constants
     {
-        public static string Name = "HkmpPouch";
-        public static string Version = "0.3.0"; // given to HKMP bump only when API is incompatible
-        public static string ActualVersion = "0.4.0";
-        public static string AllScenes = "$AllScenes$";
-        public static string SameScenes = "";
+        /// <summary>
+        /// Name of the HKMP Addon
+        /// </summary>
+        public const string Name = "HkmpPouch";
+
+        /// <summary>
+        /// Version of the HKMP Addon
+        /// </summary>
+        public const string Version = "0.3.0"; // given to HKMP bump only when API is incompatible
+
+        /// <summary>
+        /// Version of the Pipe
+        /// </summary>
+        public const string ActualVersion = "0.4.0";
+
+        /// <summary>
+        /// String denoting All scenes
+        /// </summary>
+        public const string AllScenes = "$AllScenes$";
+
+        /// <summary>
+        /// String denoting Same scene
+        /// </summary>
+        public const string SameScenes = "";
     }
 }

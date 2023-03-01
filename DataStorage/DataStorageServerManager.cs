@@ -6,20 +6,20 @@ using System.Collections.Generic;
 
 namespace HkmpPouch.DataStorage
 {
-    public class DataStorageServerManager
+    internal class DataStorageServerManager
     {
 
-        public string modName;
+        internal string modName;
         private Dictionary<string, CounterServer> Counters = new();
         private Dictionary<string, AppendOnlyListServer> AppendOnlyLists = new();
         private PipeServer pipe;
-        public DataStorageServerManager(string modName)
+        internal DataStorageServerManager(string modName)
         {
             this.modName = modName;
             this.pipe = new PipeServer(this.modName);
             this.pipe.OnRecieve += HandleEvent;
         }
-        public void HandleEvent(System.Object _, RecievedEventArgs args)
+        private void HandleEvent(System.Object _, ReceivedEventArgs args)
         {
 
             if (Counters == null)

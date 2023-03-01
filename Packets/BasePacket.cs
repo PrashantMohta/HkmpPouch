@@ -6,10 +6,9 @@ namespace HkmpPouch.Packets
     {
 
         public bool IsReliable => _isReliable;
-        public bool DropReliableDataIfNewerExists => _dropReliableDataIfNewerExists;
+        public bool DropReliableDataIfNewerExists => false; //cannot set this to true because our packets are reused between mods.
 
         public bool _isReliable = false;
-        public bool _dropReliableDataIfNewerExists = false;
         public string mod { get; set; }
         public string eventName { get; set; }
         public string eventData { get; set; }

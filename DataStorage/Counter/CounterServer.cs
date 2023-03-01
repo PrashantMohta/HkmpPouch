@@ -2,14 +2,14 @@
 
 namespace HkmpPouch.DataStorage.Counter
 {
-    public class CounterServer { 
+    internal class CounterServer {
 
-        public string Name;
-        public PipeServer pipe;
-        public int Count { get; private set; }
+        internal string Name;
+        internal PipeServer pipe;
+        internal int Count { get; private set; }
         private bool pendingUpdates = false;
         private static Timer EventTimer = new Timer(500);
-        public CounterServer(PipeServer pipe, string name)
+        internal CounterServer(PipeServer pipe, string name)
         {
             this.Count = 0;
             this.Name = name;
@@ -19,31 +19,30 @@ namespace HkmpPouch.DataStorage.Counter
             CounterServer.EventTimer.Enabled = true;
         }
 
-        public void BatchUpdateClients(System.Object source, ElapsedEventArgs e)
+        internal void BatchUpdateClients(System.Object source, ElapsedEventArgs e)
         {
             if (!pendingUpdates) { return; }
             UpdateClients();
             pendingUpdates = false;
         }
 
-        public void UpdateClients()
+        internal void UpdateClients()
         {
             // send updated value to clients
             this.pipe.Broadcast(CounterEvents.UPDATE, $"{this.Name}|{this.Count}");
-
         }
 
-        public void UpdateClient(ushort toPlayer)
+        internal void UpdateClient(ushort toPlayer)
         {
             this.pipe.SendToPlayer(toPlayer, CounterEvents.UPDATE, $"{this.Name}|{this.Count}");
         }
-        public void Increment(ushort value)
+        internal void Increment(ushort value)
         {
             this.Count += value;
             this.pendingUpdates = true;
         }
 
-        public void Decrement(ushort value)
+        internal void Decrement(ushort value)
         {
             this.Count -= value;
             this.pendingUpdates = true;

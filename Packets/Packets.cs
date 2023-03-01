@@ -4,17 +4,13 @@ using System;
 
 namespace HkmpPouch.Packets
 {
-    public enum PacketsEnum
+    internal enum PacketsEnum
     {
         ToServerPacket,
         PlayerToPlayerPacket,
         PlayerToPlayersPacket,
         ToPlayerPacket,
         ToPlayersPacket
-    }
-    public class RecievedEventArgs : EventArgs
-    {
-        public RecievedData Data { get; set; }
     }
     internal static class PacketBoi
     {

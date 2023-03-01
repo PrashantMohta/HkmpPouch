@@ -6,17 +6,17 @@ using System.Timers;
 
 namespace HkmpPouch.DataStorage.AppendOnlyList
 {
-    public class AppendOnlyListServer
+    internal class AppendOnlyListServer
     {
-        public string Name;
-        public PipeServer pipe;
-        private List<ListItem> data = new();
+        internal string Name;
+        internal PipeServer pipe;
+        internal List<ListItem> data = new();
 
         private bool pendingPrune = false;
         private static Timer EventTimer = new Timer(1000);
 
 
-        public AppendOnlyListServer(PipeServer pipe, string name)
+        internal AppendOnlyListServer(PipeServer pipe, string name)
         {
             this.Name = name;
             this.pipe = pipe;
@@ -25,13 +25,13 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
             AppendOnlyListServer.EventTimer.Enabled = true;
         }
 
-        public void BatchedPrune(System.Object source, ElapsedEventArgs e)
+        internal void BatchedPrune(System.Object source, ElapsedEventArgs e)
         {
             if (!this.pendingPrune) { return; }
             Prune();
         }
 
-        public void Prune()
+        internal void Prune()
         {
             data = data.Where(item => {
                 return (DateTime.Now - item.insertedOn).TotalSeconds < item.ttl;
@@ -39,14 +39,14 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
             this.pendingPrune = false;
         }
 
-        public void Add(ListItem item)
+        internal void Add(ListItem item)
         {
             this.pendingPrune = true;
             data.Add(item);
             UpdateClientsWithLatestData(item);
         }
 
-        public ListItem LastItem()
+        internal ListItem LastItem()
         {
             Prune();
             if (data.Count == 0)
@@ -56,7 +56,7 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
             return data[data.Count - 1];
         }
 
-        public string SerialiseItems()
+        internal string SerialiseItems()
         {
             Prune();
             if (data.Count == 0)
@@ -67,7 +67,7 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
             return JsonConvert.SerializeObject(data.Select(item => item.value));
         }
 
-        public void UpdateClientWithAllData(ushort toPlayer)
+        internal void UpdateClientWithAllData(ushort toPlayer)
         {
             var serialisedItems = SerialiseItems();
 
@@ -76,7 +76,7 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
                 pipe.SendToPlayer(toPlayer, AppendOnlyListEvents.GOTALL, $"{this.Name}|{serialisedItems}");
             }
         }
-        public void UpdateClientsWithLatestData(ListItem lastItem)
+        internal void UpdateClientsWithLatestData(ListItem lastItem)
         {
             if (lastItem != null)
             {

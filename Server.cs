@@ -21,7 +21,7 @@ namespace HkmpPouch
 
         internal IServerApi Api;
 
-        internal event EventHandler<RecievedEventArgs> OnRecieve;
+        internal event EventHandler<ReceivedEventArgs> OnRecieve;
         internal IServerAddonNetworkReceiver<PacketsEnum> NetReceiver;
         internal IServerAddonNetworkSender<PacketsEnum> NetSender;
 
@@ -40,9 +40,9 @@ namespace HkmpPouch
         {
             Logger.Info(str);
         }
-        internal void RecieveData(RecievedData r)
+        internal void RecieveData(ReceivedData r)
         {
-            OnRecieve?.Invoke(this, new RecievedEventArgs { Data = r });
+            OnRecieve?.Invoke(this, new ReceivedEventArgs { Data = r });
         }
 
 
@@ -61,11 +61,9 @@ namespace HkmpPouch
             if (!ModDataStorageServerManager.TryGetValue(packet.mod, out var DataStore)) {
                 ModDataStorageServerManager[packet.mod] = new DataStorageServerManager(packet.mod);
             }
-            RecieveData(new RecievedData
+            RecieveData(new ReceivedData
             {
                 IsReliable = packet.IsReliable,
-                DropReliableDataIfNewerExists = packet.DropReliableDataIfNewerExists,
-                Rebroadcast = false,
                 FromPlayer = fromPlayer,
                 ModName = packet.mod,
                 EventData = packet.eventData,
@@ -77,7 +75,7 @@ namespace HkmpPouch
         {
             //don't recieve on server 
             /*
-            RecieveData(new RecievedData
+            RecieveData(new ReceivedData
             {
                 IsReliable = packet.IsReliable,
                 DropReliableDataIfNewerExists = packet.DropReliableDataIfNewerExists,
@@ -88,6 +86,7 @@ namespace HkmpPouch
                 EventData = packet.eventData,
                 EventName = packet.eventName,
             });*/
+
             // rebroadcast
             packet.fromPlayer = fromPlayer;
             Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, packet, packet.toPlayer);
@@ -95,7 +94,7 @@ namespace HkmpPouch
 
         internal void PlayerToPlayersPacketHandler(ushort fromPlayer, PlayerToPlayersPacket packet)
         {
-            /*RecieveData(new RecievedData
+            /*RecieveData(new ReceivedData
             {
                 IsReliable = packet.IsReliable,
                 DropReliableDataIfNewerExists = packet.DropReliableDataIfNewerExists,
@@ -105,6 +104,8 @@ namespace HkmpPouch
                 EventData = packet.eventData,
                 EventName = packet.eventName,
             });*/
+
+            // rebroadcast
             bool allScenes = packet.sceneName == Constants.AllScenes;
             bool sameScene = packet.sceneName == Constants.SameScenes;
 
@@ -119,7 +120,6 @@ namespace HkmpPouch
                 {
                     Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket { 
                     _isReliable = packet._isReliable,
-                    _dropReliableDataIfNewerExists = packet._dropReliableDataIfNewerExists,
                     toPlayer = player.Id,
                     fromPlayer = fromPlayer,
                     sceneName = packet.sceneName,
