@@ -6,6 +6,10 @@
     public static class Constants
     {
         /// <summary>
+        /// Load Priority of the Mod
+        /// </summary>
+        public const int Priority = -1000;
+        /// <summary>
         /// Name of the HKMP Addon
         /// </summary>
         public const string Name = "HkmpPouch";

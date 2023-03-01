@@ -18,6 +18,12 @@ namespace HkmpPouch
         internal static ServerAddon server;
 
         /// <summary>
+        /// LoadPriority of the Mod
+        /// </summary>
+        /// <returns></returns>
+        public override int LoadPriority() => Constants.Priority;
+
+        /// <summary>
         /// Name of the Mod
         /// </summary>
         /// <returns>Name of the Mod</returns>
