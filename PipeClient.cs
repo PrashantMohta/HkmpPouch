@@ -9,7 +9,7 @@ namespace HkmpPouch
     /// <summary>
     /// A pipe to send and recieve data on the client side.
     /// </summary>
-    public class PipeClient
+    public class PipeClient : OnAble
     {
         /// <summary>
         /// Name of the Pipe (typically one mod should only require one pipe)
@@ -59,6 +59,7 @@ namespace HkmpPouch
             if (e.Data.ModName != ModName) { return; }
             Logger.Debug($"Client Received event {e.Data.EventName} = {e.Data.EventData}");
             OnRecieve?.Invoke(this, e);
+            base.TriggerEvents(e.Data.EventName, e.Data);
         }
 
         /// <summary>
@@ -132,6 +133,76 @@ namespace HkmpPouch
                 sceneName = SceneName,
                 _isReliable = IsReliable
             });
+        }
+
+
+        /// <summary>
+        /// Only send event to the server (presumably to be handled by a server side addon)
+        /// </summary>
+        /// <param name="pipeEvent">The pipeEvent to send</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void SendToServer(PipeEvent pipeEvent, bool IsReliable = true)
+        {
+            SendToServer(pipeEvent.GetName(), pipeEvent.ToString(), IsReliable);
+        }
+        /// <summary>
+        /// Send an event to a single player
+        /// </summary>
+        /// <param name="PlayerId">Player Id of the recieving player</param>
+        /// <param name="pipeEvent">The pipeEvent to send</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void SendToPlayer(ushort PlayerId, PipeEvent pipeEvent, bool SameScene = true, bool IsReliable = true)
+        {
+            SendToPlayer(PlayerId, pipeEvent.GetName(), pipeEvent.ToString(), SameScene, IsReliable);
+        }
+
+        /// <summary>
+        /// Send an event to many players
+        /// </summary>
+        /// <param name="pipeEvent">The pipeEvent to send</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void Broadcast(PipeEvent pipeEvent, bool SameScene = true, bool IsReliable = true)
+        {
+            if (SameScene)
+            {
+                BroadcastInScene(pipeEvent, Constants.SameScenes, IsReliable);
+            }
+            else
+            {
+                BroadcastInScene(pipeEvent, Constants.AllScenes, IsReliable);
+            }
+        }
+        /// <summary>
+        /// Send Event to all the connected Players in a particular scene
+        /// </summary>
+        /// <param name="pipeEvent">The pipeEvent to send</param>
+        /// <param name="SceneName">Name of the scene to send the data in</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void BroadcastInScene(PipeEvent pipeEvent, string SceneName, bool IsReliable = true)
+        {
+
+            BroadcastInScene(pipeEvent.GetName(),pipeEvent.ToString(), SceneName, IsReliable);
+        }
+
+        /// <summary>
+        /// Check if this Pipe has a server counter part installed on this server
+        /// </summary>
+        /// <param name="callback"> called with the boolean result</param>
+        public void ServerCounterPartAvailable(Action<bool> callback)
+        {
+            Client.Instance.HasServerCounterPart(ModName, callback);
+        }
+
+        /// <summary>
+        /// Destroy the pipe safely
+        /// </summary>
+        new public void Destroy()
+        {
+            base.Destroy();
+            Client.Instance.OnRecieve -= HandleRecieve;
+            OnRecieve = null;
         }
     }
 }

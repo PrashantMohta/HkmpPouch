@@ -9,7 +9,10 @@ namespace HkmpPouch.Packets
         PlayerToPlayerPacket,
         PlayerToPlayersPacket,
         ToPlayerPacket,
-        ToPlayersPacket
+        ToPlayersPacket,
+
+        GetServerMetadataPacket,
+        ServerPipeListPacket
     }
     internal static class PacketBoi
     {
@@ -27,6 +30,10 @@ namespace HkmpPouch.Packets
                     return new PacketDataCollection<ToPlayerPacket>();
                 case PacketsEnum.ToPlayersPacket:
                     return new PacketDataCollection<ToPlayersPacket>();
+                case PacketsEnum.GetServerMetadataPacket:
+                    return new PacketDataCollection<GetServerMetadataPacket>();
+                case PacketsEnum.ServerPipeListPacket:
+                    return new PacketDataCollection<ServerPipeListPacket>();
             }
             return null;
         }

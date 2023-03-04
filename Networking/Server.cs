@@ -26,7 +26,12 @@ namespace HkmpPouch.Networking
         internal IServerAddonNetworkSender<PacketsEnum> NetSender;
 
         internal Dictionary<string, DataStorageServerManager> ModDataStorageServerManager = new Dictionary<string, DataStorageServerManager>();
+        private List<string> PipeList = new();
 
+        internal void AddPipe(string s)
+        {
+            PipeList.Add(s);
+        }
         public Server()
         {
             Instance = this;
@@ -44,7 +49,7 @@ namespace HkmpPouch.Networking
         {
             Logger.Debug(str);
         }
-        internal void RecieveData(ReceivedData r)
+        internal void RecieveData(EventContainer r)
         {
             OnRecieve?.Invoke(this, new ReceivedEventArgs { Data = r });
         }
@@ -55,17 +60,30 @@ namespace HkmpPouch.Networking
             Api = serverApi;
             NetReceiver = Api.NetServer.GetNetworkReceiver<PacketsEnum>(Instance,PacketBoi.InstantiatePacket);
 
+            NetReceiver.RegisterPacketHandler<GetServerMetadataPacket>(PacketsEnum.GetServerMetadataPacket, GetServerMetadataPacketHandler);
+
             NetReceiver.RegisterPacketHandler<ToServerPacket>(PacketsEnum.ToServerPacket, ToServerPacketHandler);
             NetReceiver.RegisterPacketHandler<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, PlayerToPlayerPacketHandler);
             NetReceiver.RegisterPacketHandler<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayersPacket, PlayerToPlayersPacketHandler);
 
         }
+
+        private void GetServerMetadataPacketHandler(ushort playerId, GetServerMetadataPacket packet)
+        {
+
+            Logger.Info("got get packet " + PipeList.Count);
+            Send<ServerPipeListPacket>(PacketsEnum.ServerPipeListPacket, new ServerPipeListPacket
+            {
+                PipeList = PipeList
+            }, playerId);
+        }
+
         internal void ToServerPacketHandler(ushort fromPlayer, ToServerPacket packet)
         {
             if (!ModDataStorageServerManager.TryGetValue(packet.mod, out var DataStore)) {
                 ModDataStorageServerManager[packet.mod] = new DataStorageServerManager(packet.mod);
             }
-            RecieveData(new ReceivedData
+            RecieveData(new EventContainer
             {
                 IsReliable = packet.IsReliable,
                 FromPlayer = fromPlayer,

@@ -27,7 +27,7 @@
         /// <summary>
         /// String denoting All scenes
         /// </summary>
-        public const string AllScenes = "$AllScenes$";
+        public const string AllScenes = "$All$";
 
         /// <summary>
         /// String denoting Same scene

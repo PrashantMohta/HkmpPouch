@@ -3,6 +3,8 @@ using Hkmp.Api.Client.Networking;
 using Hkmp.Networking.Packet;
 using HkmpPouch.Packets;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HkmpPouch.Networking
 {
@@ -20,10 +22,14 @@ namespace HkmpPouch.Networking
 
         internal static event EventHandler<EventArgs> OnReady;
 
+        internal static event EventHandler<EventArgs> OnMetadataUpdate;
+
         internal event EventHandler<ReceivedEventArgs> OnRecieve;
 
         internal IClientAddonNetworkReceiver<PacketsEnum> NetReceiver;
         internal IClientAddonNetworkSender<PacketsEnum> NetSender;
+        internal bool HasServerPipeList { get; private set; } = false;
+        private List<string> ServerPipeList = new();
         public Client() {
             Instance = this;
         }
@@ -40,7 +46,7 @@ namespace HkmpPouch.Networking
             Logger.Debug(str);
         }
 
-        internal void RecieveData(ReceivedData r)
+        internal void RecieveData(EventContainer r)
         {
             OnRecieve?.Invoke(this, new ReceivedEventArgs { Data = r });
         }
@@ -53,11 +59,38 @@ namespace HkmpPouch.Networking
             NetReceiver.RegisterPacketHandler<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayersPacket, PlayerToPlayersPacketHandler);
             NetReceiver.RegisterPacketHandler<ToPlayerPacket>(PacketsEnum.ToPlayerPacket, ToPlayerPacketHandler);
             NetReceiver.RegisterPacketHandler<ToPlayersPacket>(PacketsEnum.ToPlayersPacket, ToPlayersPacket);
+            NetReceiver.RegisterPacketHandler<ServerPipeListPacket>(PacketsEnum.ServerPipeListPacket, ServerPipeListPacketHandler);
+
             OnReady?.Invoke(this, EventArgs.Empty);
+            Api.ClientManager.ConnectEvent += ClientManager_ConnectEvent;
+            Api.ClientManager.DisconnectEvent += ClientManager_DisconnectEvent;
         }
 
-        internal void Send<TPacketData>(PacketsEnum PacketId,TPacketData PacketData) where TPacketData : IPacketData, new() {
-            if (!Api.NetClient.IsConnected)
+        private void ServerPipeListPacketHandler(ServerPipeListPacket packet)
+        {
+            HasServerPipeList = true;
+            ServerPipeList = packet.PipeList;
+            OnMetadataUpdate?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ClientManager_DisconnectEvent()
+        {
+            HasServerPipeList = false;
+            ServerPipeList.Clear();
+            OnMetadataUpdate?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ClientManager_ConnectEvent()
+        {
+            Logger.Info("sending get packet");
+            Send<GetServerMetadataPacket>(PacketsEnum.GetServerMetadataPacket, new GetServerMetadataPacket
+            {
+                MetadataKey = (byte)METADATA.INSTALLED_PIPES
+            });
+        }
+
+        internal void Send<TPacketData>(PacketsEnum PacketId, TPacketData PacketData) where TPacketData : IPacketData, new() {
+            if (Api == null || !Api.NetClient.IsConnected)
             {
                 return;
             }
@@ -71,7 +104,7 @@ namespace HkmpPouch.Networking
 
         internal void PlayerToPlayerPacketHandler(PlayerToPlayerPacket packet)
         {
-            RecieveData(new ReceivedData
+            RecieveData(new EventContainer
             {
                 IsReliable = packet.IsReliable,
                 ToPlayer = packet.toPlayer,
@@ -83,9 +116,9 @@ namespace HkmpPouch.Networking
             });
         }
 
-        internal  void PlayerToPlayersPacketHandler(PlayerToPlayersPacket packet)
+        internal void PlayerToPlayersPacketHandler(PlayerToPlayersPacket packet)
         {
-            RecieveData(new ReceivedData
+            RecieveData(new EventContainer
             {
                 IsReliable = packet.IsReliable,
                 SceneName = packet.sceneName,
@@ -96,9 +129,9 @@ namespace HkmpPouch.Networking
             });
         }
 
-        internal  void ToPlayerPacketHandler(ToPlayerPacket packet)
+        internal void ToPlayerPacketHandler(ToPlayerPacket packet)
         {
-            RecieveData(new ReceivedData
+            RecieveData(new EventContainer
             {
                 IsReliable = packet.IsReliable,
                 ToPlayer = packet.toPlayer,
@@ -108,9 +141,9 @@ namespace HkmpPouch.Networking
             });
         }
 
-        internal  void ToPlayersPacket(ToPlayersPacket packet)
+        internal void ToPlayersPacket(ToPlayersPacket packet)
         {
-            RecieveData(new ReceivedData
+            RecieveData(new EventContainer
             {
                 IsReliable = packet.IsReliable,
                 SceneName = packet.sceneName,
@@ -120,7 +153,53 @@ namespace HkmpPouch.Networking
             });
         }
 
+        internal bool HasServerCounterPart(string modName)
+        {
+            if (ServerPipeList.Contains(modName))
+            {
+                return true;
+            }
+            return false;
+        }
 
+        internal void HasServerCounterPart(string modName, Action<bool> callback)
+        {
+            if (HasServerPipeList)
+            {
+                Logger.Info("from the if");
+                foreach(var value in ServerPipeList)
+                {
+                    Logger.Info(value);
+
+                }
+                callback(ServerPipeList.Contains(modName));
+            }
+            else
+            {
+                Send<GetServerMetadataPacket>(PacketsEnum.GetServerMetadataPacket, new GetServerMetadataPacket
+                {
+                    MetadataKey = (byte)METADATA.INSTALLED_PIPES
+                });
+
+                void x(object _, EventArgs e)
+                {
+                    if (HasServerPipeList)
+                    {
+                        Logger.Info("from the x");
+
+                        foreach (var value in ServerPipeList)
+                        {
+                            Logger.Info(value);
+
+                        }
+                        callback(ServerPipeList.Contains(modName));
+                        OnMetadataUpdate -= x;
+                    }
+                }
+
+                OnMetadataUpdate += x;
+            }
+        }
 
     }
 }
