@@ -166,12 +166,6 @@ namespace HkmpPouch.Networking
         {
             if (HasServerPipeList)
             {
-                Logger.Info("from the if");
-                foreach(var value in ServerPipeList)
-                {
-                    Logger.Info(value);
-
-                }
                 callback(ServerPipeList.Contains(modName));
             }
             else
@@ -185,13 +179,6 @@ namespace HkmpPouch.Networking
                 {
                     if (HasServerPipeList)
                     {
-                        Logger.Info("from the x");
-
-                        foreach (var value in ServerPipeList)
-                        {
-                            Logger.Info(value);
-
-                        }
                         callback(ServerPipeList.Contains(modName));
                         OnMetadataUpdate -= x;
                     }
