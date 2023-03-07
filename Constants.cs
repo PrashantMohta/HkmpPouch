@@ -17,12 +17,12 @@
         /// <summary>
         /// Version of the HKMP Addon
         /// </summary>
-        public const string Version = "0.3.0"; // given to HKMP bump only when API is incompatible
+        public const string Version = "1.0.0"; // given to HKMP bump only when API is incompatible
 
         /// <summary>
         /// Version of the Pipe
         /// </summary>
-        public const string ActualVersion = "0.4.0";
+        public const string ActualVersion = "1.0.0";
 
         /// <summary>
         /// String denoting All scenes
