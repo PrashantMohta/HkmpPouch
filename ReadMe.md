@@ -31,5 +31,7 @@ Note : Due to the way this works, it means that Pouch in itself becomes a mandat
 	 - [ESoulLink](https://github.com/PrashantMohta/ESoulLink)
  - P2P communication
 	 - [GhostHunter](https://github.com/PrashantMohta/ghosthunter)
+	 - [EmoteWheel](https://github.com/PrashantMohta/EmoteWheel)
+	 - [HKMP.HealthDisplay](https://github.com/TheMulhima/HKMP.HealthDisplay) 
  - Server side data storage
-	 - [To be released](https://example.com)
+	 - [MultiplayerEvents](https://github.com/PrashantMohta/MultiplayerEvents)
