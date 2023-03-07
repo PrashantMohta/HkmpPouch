@@ -22,7 +22,7 @@ namespace HkmpPouch.DataStorage.AppendOnlyList
 
     internal class AppendOnlyListEvents
     {
-        internal  const string ADD = "|La"; //pipe Append Only List Add
+        internal const string ADD = "|La"; //pipe Append Only List Add
         internal const string ADDED = "|LA"; //pipe Append Only List Added New Element
         internal const string GETALL = "|Lg"; //pipe Append Only List Get All
         internal const string GOTALL = "|LG"; //pipe Append Only List Got All (for client)
