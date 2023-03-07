@@ -95,20 +95,6 @@ namespace HkmpPouch.Networking
 
         internal void PlayerToPlayerPacketHandler(ushort fromPlayer, PlayerToPlayerPacket packet)
         {
-            //don't recieve on server 
-            /*
-            RecieveData(new ReceivedData
-            {
-                IsReliable = packet.IsReliable,
-                DropReliableDataIfNewerExists = packet.DropReliableDataIfNewerExists,
-                ToPlayer = packet.toPlayer,
-                FromPlayer = fromPlayer,
-                SceneName = packet.sceneName,
-                ModName = packet.mod,
-                EventData = packet.eventData,
-                EventName = packet.eventName,
-            });*/
-
             // rebroadcast
             packet.fromPlayer = fromPlayer;
             Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, packet, packet.toPlayer);
@@ -116,17 +102,7 @@ namespace HkmpPouch.Networking
 
         internal void PlayerToPlayersPacketHandler(ushort fromPlayer, PlayerToPlayersPacket packet)
         {
-            /*RecieveData(new ReceivedData
-            {
-                IsReliable = packet.IsReliable,
-                DropReliableDataIfNewerExists = packet.DropReliableDataIfNewerExists,
-                SceneName = packet.sceneName,
-                FromPlayer = fromPlayer,
-                ModName = packet.mod,
-                EventData = packet.eventData,
-                EventName = packet.eventName,
-            });*/
-
+            
             // rebroadcast
             bool allScenes = packet.sceneName == Constants.AllScenes;
             bool sameScene = packet.sceneName == Constants.SameScenes;

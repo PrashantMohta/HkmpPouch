@@ -14,8 +14,8 @@ namespace HkmpPouch
     {
 
         internal static HkmpPouch Instance;
-        internal static ClientAddon client;
-        internal static ServerAddon server;
+        internal static ClientAddon client = new Client();
+        internal static ServerAddon server = new Server();
 
         /// <summary>
         /// LoadPriority of the Mod
@@ -38,16 +38,7 @@ namespace HkmpPouch
         /// ctor
         /// </summary>
         public HkmpPouch()
-        {
-            if (client == null)
-            {
-                client = new Client();
-            }
-            if (server == null)
-            {
-                server = new Server();
-            }
-        }
+        {        }
 
         /// <summary>
         /// The Initialize function for this mod

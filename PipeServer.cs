@@ -50,6 +50,8 @@ namespace HkmpPouch
             OnRecieve?.Invoke(this, e);
             base.TriggerEvents(e.Data.EventName, e.Data);
         }
+
+
         /// <summary>
         /// Send Event to a single Player
         /// </summary>
@@ -57,44 +59,18 @@ namespace HkmpPouch
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void SendToPlayer(ushort ToPlayer, string EventName, string EventData, bool IsReliable = true) {
+        public void SendToPlayer(ushort ToPlayer, string EventName, string EventData, bool IsReliable = true)
+        {
 
             Logger.Debug($"Server SendToPlayer {ToPlayer} event {EventName} = {EventData}");
-            Server.Instance.Send<ToPlayerPacket>(PacketsEnum.ToPlayerPacket, new ToPlayerPacket {
+            Server.Instance.Send<ToPlayerPacket>(PacketsEnum.ToPlayerPacket, new ToPlayerPacket
+            {
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
                 toPlayer = ToPlayer,
                 _isReliable = IsReliable
             }, ToPlayer);
-        }
-        /// <summary>
-        /// Send Event to all the connected Players
-        /// </summary>
-        /// <param name="EventName">Name of your custom event</param>
-        /// <param name="EventData">Corresponding event data</param>
-        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void Broadcast(string EventName, string EventData, bool IsReliable = true) {
-            BroadcastInScene(EventName, EventData, Constants.AllScenes, IsReliable);
-        }
-        /// <summary>
-        /// Send Event to all the connected Players in a particular scene
-        /// </summary>
-        /// <param name="EventName">Name of your custom event</param>
-        /// <param name="EventData">Corresponding event data</param>
-        /// <param name="SceneName">Name of the scene to send the data in</param>
-        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true)
-        {
-            Logger.Debug($"Server BroadcastInScene {SceneName} event {EventName} = {EventData}");
-            Server.Instance.Broadcast(new ToPlayersPacket
-            {
-                mod = ModName,
-                eventName = EventName,
-                eventData = EventData,
-                sceneName = SceneName,
-                _isReliable = IsReliable
-            });
         }
 
         /// <summary>
@@ -117,6 +93,35 @@ namespace HkmpPouch
             Broadcast(pipeEvent.GetName(), pipeEvent.ToString(),IsReliable);
         }
 
+        /// <summary>
+        /// Send Event to all the connected Players
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void Broadcast(string EventName, string EventData, bool IsReliable = true)
+        {
+            BroadcastInScene(EventName, EventData, Constants.AllScenes, IsReliable);
+        }
+        /// <summary>
+        /// Send Event to all the connected Players in a particular scene
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SceneName">Name of the scene to send the data in</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true)
+        {
+            Logger.Debug($"Server BroadcastInScene {SceneName} event {EventName} = {EventData}");
+            Server.Instance.Broadcast(new ToPlayersPacket
+            {
+                mod = ModName,
+                eventName = EventName,
+                eventData = EventData,
+                sceneName = SceneName,
+                _isReliable = IsReliable
+            });
+        }
         /// <summary>
         /// Send Event to all the connected Players in a particular scene
         /// </summary>

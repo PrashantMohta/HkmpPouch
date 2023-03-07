@@ -11,7 +11,7 @@
     /// </summary>
     public class Logger 
     {
-        private string Name;
+        private readonly string Name;
         private readonly ILogger _logger;
         internal Logger(string Name,ILogger L) {
             this.Name = Name;
