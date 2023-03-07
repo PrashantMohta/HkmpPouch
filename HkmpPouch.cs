@@ -35,6 +35,21 @@ namespace HkmpPouch
         public override string GetVersion() => Constants.ActualVersion;
 
         /// <summary>
+        /// ctor
+        /// </summary>
+        public HkmpPouch()
+        {
+            if (client == null)
+            {
+                client = new Client();
+            }
+            if (server == null)
+            {
+                server = new Server();
+            }
+        }
+
+        /// <summary>
         /// The Initialize function for this mod
         /// </summary>
         /// <param name="preloadedObjects">preloadedObjects</param>
@@ -49,16 +64,8 @@ namespace HkmpPouch
 
         private static void RegisterAddons()
         {
-            if (client == null)
-            {
-                client = new Client();
-                ClientAddon.RegisterAddon(client);
-            }
-            if (server == null)
-            {
-                server = new Server();
-                ServerAddon.RegisterAddon(server);
-            }
+            ClientAddon.RegisterAddon(client);
+            ServerAddon.RegisterAddon(server);
         }
 
     }
