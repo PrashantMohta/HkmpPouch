@@ -328,6 +328,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gIthub\worlflows\main.yml" />
     <None Include=".gitignore" />
     <None Include="ReadMe.md" />
   </ItemGroup>
