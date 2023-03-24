@@ -21,6 +21,11 @@ namespace HkmpPouch
         /// </summary>
         public IClientApi ClientApi { get => Client.Instance.Api; }
 
+        /// <summary>
+        /// An event that fires when ClientApi is available
+        /// </summary>
+        public event EventHandler<EventArgs> OnReady;
+
 
         /// <summary>
         /// An event that fires when new data is recieved on the client
@@ -41,15 +46,15 @@ namespace HkmpPouch
         public PipeClient(string ModName)
         {
             this.ModName = ModName;
-            this.Logger = new Logger(this.ModName,Client.Instance);
             Client.OnReady += Client_OnReady;
-            Logger.Info("PipeClient Created");
         }
 
         private void Client_OnReady(object sender, EventArgs e)
         {
             if (IsListening) { return; }
+            this.Logger = new Logger(this.ModName, Client.Instance);
             Logger.Info("Client Ready");
+            OnReady?.Invoke(this, new EventArgs());
             Client.Instance.OnRecieve += HandleRecieve;
             IsListening = true;
         }
