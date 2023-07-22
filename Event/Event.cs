@@ -48,6 +48,11 @@ namespace HkmpPouch
         /// Corresponding EventData
         /// </summary>
         public string EventData = "";
+
+        /// <summary>
+        /// Extra Bytes sent with the eventt
+        /// </summary>
+        public byte[] ExtraBytes = new byte[0];
     }
 
     /// <summary>

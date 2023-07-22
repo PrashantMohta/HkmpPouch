@@ -73,9 +73,10 @@ namespace HkmpPouch
         /// <param name="PlayerId">Player Id of the recieving player</param>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="SameScene">Should the receiving player be in the same scene</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void SendToPlayer(ushort PlayerId, string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
+        public void SendToPlayer(ushort PlayerId, string EventName, string EventData, byte[] ExtraBytes = null, bool SameScene = true, bool IsReliable = true)
         {
             Logger.Debug($"Client SendToPlayer {PlayerId} event {EventName} = {EventData}");
             Client.Instance.Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, new PlayerToPlayerPacket
@@ -83,6 +84,7 @@ namespace HkmpPouch
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
+                extraBytes = ExtraBytes,
                 toPlayer = PlayerId,
                 sceneName = SameScene ? Constants.SameScenes : Constants.AllScenes,
                 _isReliable = IsReliable
@@ -98,7 +100,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToPlayer(ushort PlayerId, PipeEvent pipeEvent, bool SameScene = true, bool IsReliable = true)
         {
-            SendToPlayer(PlayerId, pipeEvent.GetName(), pipeEvent.ToString(), SameScene, IsReliable);
+            SendToPlayer(PlayerId, pipeEvent.GetName(), pipeEvent.ToString(), pipeEvent.ExtraBytes, SameScene, IsReliable);
         }
 
 
@@ -107,8 +109,9 @@ namespace HkmpPouch
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void SendToServer(string EventName, string EventData, bool IsReliable = true)
+        public void SendToServer(string EventName, string EventData,byte[] ExtraBytes = null, bool IsReliable = true)
         {
             Logger.Debug($"Client SendToServer event {EventName} = {EventData}");
             Client.Instance.Send<ToServerPacket>(PacketsEnum.ToServerPacket, new ToServerPacket
@@ -116,6 +119,7 @@ namespace HkmpPouch
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
+                extraBytes = ExtraBytes,
                 _isReliable = IsReliable
             });
         }
@@ -127,7 +131,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToServer(PipeEvent pipeEvent, bool IsReliable = true)
         {
-            SendToServer(pipeEvent.GetName(), pipeEvent.ToString(), IsReliable);
+            SendToServer(pipeEvent.GetName(), pipeEvent.ToString(), pipeEvent.ExtraBytes, IsReliable);
         }
 
         /// <summary>
@@ -135,17 +139,18 @@ namespace HkmpPouch
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="SameScene">Should the receiving player be in the same scene</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void Broadcast(string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
+        public void Broadcast(string EventName, string EventData, byte[] ExtraBytes = null, bool SameScene = true, bool IsReliable = true)
         {
             if (SameScene)
             {
-                BroadcastInScene(EventName, EventData, Constants.SameScenes, IsReliable);
+                BroadcastInScene(EventName, EventData, Constants.SameScenes, ExtraBytes, IsReliable);
             }
             else
             {
-                BroadcastInScene(EventName, EventData, Constants.AllScenes, IsReliable);
+                BroadcastInScene(EventName, EventData, Constants.AllScenes, ExtraBytes, IsReliable);
             }
         }
 
@@ -176,7 +181,7 @@ namespace HkmpPouch
         public void BroadcastInScene(PipeEvent pipeEvent, string SceneName, bool IsReliable = true)
         {
 
-            BroadcastInScene(pipeEvent.GetName(),pipeEvent.ToString(), SceneName, IsReliable);
+            BroadcastInScene(pipeEvent.GetName(),pipeEvent.ToString(), SceneName, pipeEvent.ExtraBytes, IsReliable);
         }
 
         /// <summary>
@@ -184,9 +189,10 @@ namespace HkmpPouch
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="SceneName">Name of the scene to send the data in</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true)
+        public void BroadcastInScene(string EventName, string EventData, string SceneName, byte[] ExtraBytes = null, bool IsReliable = true)
         {
 
             Logger.Debug($"Client BroadcastInScene {SceneName} event {EventName} = {EventData}");
@@ -195,6 +201,7 @@ namespace HkmpPouch
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
+                extraBytes = ExtraBytes,
                 sceneName = SceneName,
                 _isReliable = IsReliable
             });

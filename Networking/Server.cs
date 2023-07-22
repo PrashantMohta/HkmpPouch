@@ -90,6 +90,7 @@ namespace HkmpPouch.Networking
                 ModName = packet.mod,
                 EventData = packet.eventData,
                 EventName = packet.eventName,
+                ExtraBytes = packet.extraBytes
             });
         }
 
