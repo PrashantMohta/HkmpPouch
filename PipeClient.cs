@@ -66,6 +66,18 @@ namespace HkmpPouch
             OnRecieve?.Invoke(this, e);
             base.TriggerEvents(e.Data.EventName, e.Data);
         }
+        /// <summary>
+        /// Send an event to a single player
+        /// </summary>
+        /// <param name="PlayerId">Player Id of the recieving player</param>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void SendToPlayer(ushort PlayerId, string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
+        {
+            SendToPlayer(PlayerId, EventName, EventData, null, SameScene, IsReliable);
+        }
 
         /// <summary>
         /// Send an event to a single player
@@ -139,6 +151,18 @@ namespace HkmpPouch
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SameScene">Should the receiving player be in the same scene</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void Broadcast(string EventName, string EventData, bool SameScene = true, bool IsReliable = true)
+        {
+            Broadcast(EventName, EventData, null, SameScene, IsReliable);
+        }
+
+        /// <summary>
+        /// Send an event to many players
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
         /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="SameScene">Should the receiving player be in the same scene</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
@@ -182,6 +206,18 @@ namespace HkmpPouch
         {
 
             BroadcastInScene(pipeEvent.GetName(),pipeEvent.ToString(), SceneName, pipeEvent.ExtraBytes, IsReliable);
+        }
+
+        /// <summary>
+        /// Send Event to all the connected Players in a particular scene
+        /// </summary>
+        /// <param name="EventName">Name of your custom event</param>
+        /// <param name="EventData">Corresponding event data</param>
+        /// <param name="SceneName">Name of the scene to send the data in</param>
+        /// <param name="IsReliable">Should the packed be resent if undelivered</param>
+        public void BroadcastInScene(string EventName, string EventData, string SceneName,bool IsReliable = true)
+        {
+            BroadcastInScene(EventName, EventData, SceneName, null, IsReliable);
         }
 
         /// <summary>
