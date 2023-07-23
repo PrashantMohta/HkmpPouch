@@ -71,7 +71,6 @@ namespace HkmpPouch.Networking
         private void GetServerMetadataPacketHandler(ushort playerId, GetServerMetadataPacket packet)
         {
 
-            Logger.Info("got get packet " + PipeList.Count);
             Send<ServerPipeListPacket>(PacketsEnum.ServerPipeListPacket, new ServerPipeListPacket
             {
                 PipeList = PipeList

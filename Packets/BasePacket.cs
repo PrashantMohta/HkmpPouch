@@ -46,9 +46,10 @@ namespace HkmpPouch.Packets
                 if (hasExtraBytes)
                 {
                     extraBytesSize = packet.ReadULong();
+                    extraBytes = new byte[extraBytesSize];
                     for (ulong i = 0; i < extraBytesSize; i++)
                     {
-                        packet.Write(extraBytes[i]);
+                        extraBytes[i] = packet.ReadByte();
                     }
                 }
             }
