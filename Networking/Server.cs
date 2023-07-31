@@ -123,8 +123,8 @@ namespace HkmpPouch.Networking
                     sceneName = packet.sceneName,
                     mod = packet.mod,
                     eventData = packet.eventData,
-                    eventName = packet.eventName
-                    
+                    eventName = packet.eventName,
+                    extraBytes = packet.extraBytes,
                     }, player.Id);
                 }
             }

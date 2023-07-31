@@ -12,8 +12,7 @@ namespace HkmpPouch.Packets
             base.ReadData(packet);
             fromPlayer = packet.ReadUShort();
             sceneName = packet.ReadString();
-
-
+            base.ReadExtraBytes(packet);
         }
 
         new public void WriteData(IPacket packet)
@@ -21,6 +20,7 @@ namespace HkmpPouch.Packets
             base.WriteData(packet);
             packet.Write(fromPlayer);
             packet.Write(sceneName);
+            base.WriteExtraBytes(packet);
 
         }
     }

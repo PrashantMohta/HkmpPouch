@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<!-- Change this to the path of your modded HK installation -->
-	<HollowKnightRefs>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed</HollowKnightRefs>
+	<HollowKnightRefs>E:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed</HollowKnightRefs>
 	<!-- Change this to the path where you want the ready-to-upload exports to be -->
 	<ExportDir>D:/__Exports/</ExportDir>
 	<!-- Uncomment this to generate a documentation file to be included with the mod -->

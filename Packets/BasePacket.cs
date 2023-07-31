@@ -22,6 +22,11 @@ namespace HkmpPouch.Packets
             packet.Write(mod);
             packet.Write(eventName);
             packet.Write(eventData);
+            
+        }
+
+        public void WriteExtraBytes(IPacket packet)
+        {
             packet.Write(hasExtraBytes);
             if (hasExtraBytes)
             {
@@ -40,6 +45,11 @@ namespace HkmpPouch.Packets
             mod = packet.ReadString();
             eventName = packet.ReadString();
             eventData = packet.ReadString();
+        }
+
+        public void ReadExtraBytes(IPacket packet)
+        {
+            extraBytesSize = 0;
             try
             {
                 var hasExtraBytes = packet.ReadBool();
