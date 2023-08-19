@@ -18,6 +18,8 @@ namespace HkmpPouch.Networking
 
         internal static Client Instance;
 
+        internal static List<PipeClient> PipeClients = new ();
+
         internal IClientApi Api;
 
         internal static event EventHandler<EventArgs> OnReady;
@@ -30,6 +32,7 @@ namespace HkmpPouch.Networking
         internal IClientAddonNetworkSender<PacketsEnum> NetSender;
         internal bool HasServerPipeList { get; private set; } = false;
         private List<string> ServerPipeList = new();
+
         public Client() {
             Instance = this;
         }
@@ -190,6 +193,14 @@ namespace HkmpPouch.Networking
 
                 OnMetadataUpdate += x;
             }
+        }
+
+        internal void RegisterPipeWithServer(PipeClient pipe)
+        {
+            //pipe.ModName;
+            Send<RegisterPipePacket>(PacketsEnum.RegisterPipePacket, new RegisterPipePacket { 
+                modName = pipe.ModName
+            });
         }
 
     }

@@ -12,7 +12,8 @@ namespace HkmpPouch.Packets
         ToPlayersPacket,
 
         GetServerMetadataPacket,
-        ServerPipeListPacket
+        ServerPipeListPacket,
+        RegisterPipePacket
     }
     internal static class PacketBoi
     {

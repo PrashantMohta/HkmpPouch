@@ -323,9 +323,12 @@
 	<Reference Include="UnityEngine.XRModule">
 		<HintPath>$(HollowKnightRefs)/UnityEngine.XRModule.dll</HintPath>
 	</Reference>
-	<Reference Include="Hkmp">
-		<HintPath>$(HollowKnightRefs)/Mods/HKMP/HKMP.dll</HintPath>
-	</Reference>
+	  <Reference Include="Hkmp">
+		  <HintPath>$(HollowKnightRefs)/Mods/HKMP/HKMP.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Satchel">
+		  <HintPath>$(HollowKnightRefs)/Mods/Satchel/Satchel.dll</HintPath>
+	  </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gIthub\worlflows\main.yml" />

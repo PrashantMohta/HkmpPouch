@@ -46,6 +46,7 @@ namespace HkmpPouch
         public PipeClient(string ModName)
         {
             this.ModName = ModName;
+            Client.PipeClients.Add(this);
             Client.OnReady += Client_OnReady;
         }
 
@@ -57,6 +58,7 @@ namespace HkmpPouch
             OnReady?.Invoke(this, new EventArgs());
             Client.Instance.OnRecieve += HandleRecieve;
             IsListening = true;
+            Client.Instance.RegisterPipeWithServer(this);
         }
 
         private void HandleRecieve(object sender, ReceivedEventArgs e)
