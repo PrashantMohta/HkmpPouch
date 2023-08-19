@@ -58,8 +58,9 @@ namespace HkmpPouch
         /// <param name="ToPlayer">Player id to send the event to</param>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void SendToPlayer(ushort ToPlayer, string EventName, string EventData, bool IsReliable = true)
+        public void SendToPlayer(ushort ToPlayer, string EventName, string EventData,byte[] ExtraBytes = null, bool IsReliable = true)
         {
 
             Logger.Debug($"Server SendToPlayer {ToPlayer} event {EventName} = {EventData}");
@@ -68,6 +69,7 @@ namespace HkmpPouch
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
+                extraBytes = ExtraBytes,
                 toPlayer = ToPlayer,
                 _isReliable = IsReliable
             }, ToPlayer);
@@ -81,7 +83,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void SendToPlayer(ushort ToPlayer, PipeEvent pipeEvent, bool IsReliable = true)
         {
-            SendToPlayer(ToPlayer, pipeEvent.GetName(),pipeEvent.ToString(),IsReliable);
+            SendToPlayer(ToPlayer, pipeEvent.GetName(),pipeEvent.ToString(), pipeEvent.ExtraBytes, IsReliable);
         }
         /// <summary>
         /// Send Event to all the connected Players
@@ -90,7 +92,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void Broadcast(PipeEvent pipeEvent, bool IsReliable = true)
         {
-            Broadcast(pipeEvent.GetName(), pipeEvent.ToString(),IsReliable);
+            Broadcast(pipeEvent.GetName(), pipeEvent.ToString(), pipeEvent.ExtraBytes, IsReliable);
         }
 
         /// <summary>
@@ -98,19 +100,21 @@ namespace HkmpPouch
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void Broadcast(string EventName, string EventData, bool IsReliable = true)
+        public void Broadcast(string EventName, string EventData, byte[] ExtraBytes = null, bool IsReliable = true)
         {
-            BroadcastInScene(EventName, EventData, Constants.AllScenes, IsReliable);
+            BroadcastInScene(EventName, EventData, Constants.AllScenes, ExtraBytes, IsReliable);
         }
         /// <summary>
         /// Send Event to all the connected Players in a particular scene
         /// </summary>
         /// <param name="EventName">Name of your custom event</param>
         /// <param name="EventData">Corresponding event data</param>
+        /// <param name="ExtraBytes">Extra byte[] to send with the event</param>
         /// <param name="SceneName">Name of the scene to send the data in</param>
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
-        public void BroadcastInScene(string EventName, string EventData, string SceneName, bool IsReliable = true)
+        public void BroadcastInScene(string EventName, string EventData, string SceneName, byte[] ExtraBytes = null,  bool IsReliable = true)
         {
             Logger.Debug($"Server BroadcastInScene {SceneName} event {EventName} = {EventData}");
             Server.Instance.Broadcast(new ToPlayersPacket
@@ -118,6 +122,7 @@ namespace HkmpPouch
                 mod = ModName,
                 eventName = EventName,
                 eventData = EventData,
+                extraBytes = ExtraBytes,
                 sceneName = SceneName,
                 _isReliable = IsReliable
             });
@@ -130,7 +135,7 @@ namespace HkmpPouch
         /// <param name="IsReliable">Should the packed be resent if undelivered</param>
         public void BroadcastInScene(PipeEvent pipeEvent, string SceneName, bool IsReliable = true)
         {
-            BroadcastInScene(pipeEvent.GetName(), pipeEvent.ToString(),SceneName, IsReliable);
+            BroadcastInScene(pipeEvent.GetName(), pipeEvent.ToString(), SceneName, pipeEvent.ExtraBytes, IsReliable);
         }
 
 

@@ -10,6 +10,7 @@ namespace HkmpPouch.Packets
         {
             base.ReadData(packet);
             toPlayer = packet.ReadUShort();
+            base.ReadExtraBytes(packet);
 
         }
 
@@ -17,6 +18,7 @@ namespace HkmpPouch.Packets
         {
             base.WriteData(packet);
             packet.Write(toPlayer);
+            base.WriteExtraBytes(packet);
 
         }
     }
