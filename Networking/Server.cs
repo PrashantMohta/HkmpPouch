@@ -6,6 +6,7 @@ using HkmpPouch.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace HkmpPouch.Networking
 {
@@ -60,6 +61,7 @@ namespace HkmpPouch.Networking
         public override void Initialize(IServerApi serverApi)
         {
             Api = serverApi;
+            Api.ServerManager.PlayerDisconnectEvent += ServerManager_PlayerDisconnectEvent;
             NetReceiver = Api.NetServer.GetNetworkReceiver<PacketsEnum>(Instance,PacketBoi.InstantiatePacket);
 
             NetReceiver.RegisterPacketHandler<GetServerMetadataPacket>(PacketsEnum.GetServerMetadataPacket, GetServerMetadataPacketHandler);
@@ -69,6 +71,26 @@ namespace HkmpPouch.Networking
             NetReceiver.RegisterPacketHandler<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, PlayerToPlayerPacketHandler);
             NetReceiver.RegisterPacketHandler<PlayerToPlayersPacket>(PacketsEnum.PlayerToPlayersPacket, PlayerToPlayersPacketHandler);
 
+        }
+
+        private void ServerManager_PlayerDisconnectEvent(IServerPlayer player)
+        {
+            RemovePlayerPipeRegisterations(player);
+        }
+
+        private void RemovePlayerPipeRegisterations(IServerPlayer player)
+        {
+            foreach(var pipe in PipeToPlayersMap)
+            {
+                if (pipe.Value.Contains(player))
+                {
+                    pipe.Value.Remove(player);
+                }
+            }
+            if (PlayerIdToPipeMap.ContainsKey(player.Id))
+            {
+                PlayerIdToPipeMap.Remove(player.Id);
+            }   
         }
 
         private void RegisterPipePacketHandler(ushort fromPlayer, RegisterPipePacket packet)
