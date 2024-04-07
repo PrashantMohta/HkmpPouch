@@ -12,7 +12,7 @@ namespace HkmpPouch.Packets
 
         public void ReadData(IPacket packet)
         {
-            packet.ReadString();
+            modName = packet.ReadString();
         }
 
         public void WriteData(IPacket packet)
