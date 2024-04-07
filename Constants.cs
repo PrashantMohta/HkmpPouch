@@ -22,7 +22,7 @@
         /// <summary>
         /// Version of the Pipe
         /// </summary>
-        public const string ActualVersion = "1.0.0";
+        public const string ActualVersion = "2.0.0";
 
         /// <summary>
         /// String denoting All scenes
