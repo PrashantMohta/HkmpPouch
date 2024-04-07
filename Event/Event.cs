@@ -50,7 +50,7 @@ namespace HkmpPouch
         public string EventData = "";
 
         /// <summary>
-        /// Extra Bytes sent with the eventt
+        /// Extra Bytes sent with the event
         /// </summary>
         public byte[] ExtraBytes = new byte[0];
     }

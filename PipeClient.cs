@@ -48,7 +48,6 @@ namespace HkmpPouch
             this.ModName = ModName;
             Client.PipeClients.Add(this);
             Client.OnReady += Client_OnReady;
-            ClientApi.ClientManager.ConnectEvent += ClientManager_ConnectEvent;
         }
 
         private void ClientManager_ConnectEvent()
@@ -60,6 +59,8 @@ namespace HkmpPouch
         {
             if (IsListening) { return; }
             this.Logger = new Logger(this.ModName, Client.Instance);
+            ClientApi.ClientManager.ConnectEvent += ClientManager_ConnectEvent;
+            Client.Instance.RegisterPipeWithServer(this);
             Logger.Info("Client Ready");
             OnReady?.Invoke(this, new EventArgs());
             Client.Instance.OnRecieve += HandleRecieve;

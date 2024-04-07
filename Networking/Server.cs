@@ -96,6 +96,11 @@ namespace HkmpPouch.Networking
         private void RegisterPipePacketHandler(ushort fromPlayer, RegisterPipePacket packet)
         {
             var player = Api.ServerManager.GetPlayer(fromPlayer);
+            if (packet.modName == null)
+            {
+                Error($"Recieved A packet without modname from playerid {player.Id}.");
+                return;
+            }
             if (!PipeToPlayersMap.TryGetValue(packet.modName, out _))
             {
                 PipeToPlayersMap[packet.modName] = new();
