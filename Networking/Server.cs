@@ -6,6 +6,7 @@ using HkmpPouch.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace HkmpPouch.Networking
 {
@@ -28,6 +29,8 @@ namespace HkmpPouch.Networking
         internal Dictionary<string, DataStorageServerManager> ModDataStorageServerManager = new Dictionary<string, DataStorageServerManager>();
         private List<string> PipeList = new();
 
+        internal Dictionary<string, List<IServerPlayer>> PipeToPlayersMap = new();
+        internal Dictionary<ushort,List<string>> PlayerIdToPipeMap = new();
         internal void AddPipe(string s)
         {
             PipeList.Add(s);
@@ -58,9 +61,11 @@ namespace HkmpPouch.Networking
         public override void Initialize(IServerApi serverApi)
         {
             Api = serverApi;
+            Api.ServerManager.PlayerDisconnectEvent += ServerManager_PlayerDisconnectEvent;
             NetReceiver = Api.NetServer.GetNetworkReceiver<PacketsEnum>(Instance,PacketBoi.InstantiatePacket);
 
             NetReceiver.RegisterPacketHandler<GetServerMetadataPacket>(PacketsEnum.GetServerMetadataPacket, GetServerMetadataPacketHandler);
+            NetReceiver.RegisterPacketHandler<RegisterPipePacket>(PacketsEnum.RegisterPipePacket, RegisterPipePacketHandler);
 
             NetReceiver.RegisterPacketHandler<ToServerPacket>(PacketsEnum.ToServerPacket, ToServerPacketHandler);
             NetReceiver.RegisterPacketHandler<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, PlayerToPlayerPacketHandler);
@@ -68,10 +73,56 @@ namespace HkmpPouch.Networking
 
         }
 
+        private void ServerManager_PlayerDisconnectEvent(IServerPlayer player)
+        {
+            RemovePlayerPipeRegisterations(player);
+        }
+
+        private void RemovePlayerPipeRegisterations(IServerPlayer player)
+        {
+            foreach(var pipe in PipeToPlayersMap)
+            {
+                if (pipe.Value.Contains(player))
+                {
+                    pipe.Value.Remove(player);
+                }
+            }
+            if (PlayerIdToPipeMap.ContainsKey(player.Id))
+            {
+                PlayerIdToPipeMap.Remove(player.Id);
+            }   
+        }
+
+        private void RegisterPipePacketHandler(ushort fromPlayer, RegisterPipePacket packet)
+        {
+            var player = Api.ServerManager.GetPlayer(fromPlayer);
+            if (packet.modName == null)
+            {
+                Error($"Recieved A packet without modname from playerid {player.Id}.");
+                return;
+            }
+            if (!PipeToPlayersMap.TryGetValue(packet.modName, out _))
+            {
+                PipeToPlayersMap[packet.modName] = new();
+            }
+            if (!PipeToPlayersMap[packet.modName].Contains(player))
+            {
+                PipeToPlayersMap[packet.modName].Add(player);
+            }
+
+            if (!PlayerIdToPipeMap.TryGetValue(fromPlayer, out _))
+            {
+                PlayerIdToPipeMap[fromPlayer] = new();
+            }
+            if (!PlayerIdToPipeMap[fromPlayer].Contains(packet.modName))
+            {
+                PlayerIdToPipeMap[fromPlayer].Add(packet.modName);
+            }
+        }
+
         private void GetServerMetadataPacketHandler(ushort playerId, GetServerMetadataPacket packet)
         {
 
-            Logger.Info("got get packet " + PipeList.Count);
             Send<ServerPipeListPacket>(PacketsEnum.ServerPipeListPacket, new ServerPipeListPacket
             {
                 PipeList = PipeList
@@ -90,6 +141,7 @@ namespace HkmpPouch.Networking
                 ModName = packet.mod,
                 EventData = packet.eventData,
                 EventName = packet.eventName,
+                ExtraBytes = packet.extraBytes
             });
         }
 
@@ -97,7 +149,17 @@ namespace HkmpPouch.Networking
         {
             // rebroadcast
             packet.fromPlayer = fromPlayer;
-            Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, packet, packet.toPlayer);
+
+            if (PlayerIdToPipeMap.TryGetValue(fromPlayer, out var pipes))
+            {
+                if (pipes.Contains(packet.mod))
+                {
+                    Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, packet, packet.toPlayer);
+                }
+            } else
+            {
+                Send<PlayerToPlayerPacket>(PacketsEnum.PlayerToPlayerPacket, packet, packet.toPlayer);
+            }
         }
 
         internal void PlayerToPlayersPacketHandler(ushort fromPlayer, PlayerToPlayersPacket packet)
@@ -107,7 +169,10 @@ namespace HkmpPouch.Networking
             bool allScenes = packet.sceneName == Constants.AllScenes;
             bool sameScene = packet.sceneName == Constants.SameScenes;
 
-            var players = Api.ServerManager.Players;
+            if(!PipeToPlayersMap.TryGetValue(packet.mod, out var players))
+            {
+                players = (List<IServerPlayer>)Api.ServerManager.Players;
+            }
             var sender = Api.ServerManager.GetPlayer(fromPlayer);
             packet.fromPlayer = fromPlayer;
 
@@ -123,8 +188,8 @@ namespace HkmpPouch.Networking
                     sceneName = packet.sceneName,
                     mod = packet.mod,
                     eventData = packet.eventData,
-                    eventName = packet.eventName
-                    
+                    eventName = packet.eventName,
+                    extraBytes = packet.extraBytes,
                     }, player.Id);
                 }
             }
@@ -148,8 +213,10 @@ namespace HkmpPouch.Networking
         internal void Broadcast(ToPlayersPacket packet) {
             bool allScenes = packet.sceneName == Constants.AllScenes;
 
-            var players = Api.ServerManager.Players;
-
+            if (!PipeToPlayersMap.TryGetValue(packet.mod, out var players))
+            {
+                players = (List<IServerPlayer>)Api.ServerManager.Players;
+            }
             for (var i = 0; i < players.Count; i++)
             {
                 var player = players.ElementAt(i);

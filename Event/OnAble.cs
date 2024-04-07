@@ -55,6 +55,7 @@ namespace HkmpPouch
                 e.Event.FromPlayer = e.FromPlayer;
                 e.Event.ToPlayer = e.ToPlayer;
                 e.Event.SceneName = e.SceneName;
+                e.Event.ExtraBytes = e.ExtraBytes;
             }
             thenActions.ForEach(x => x(e.Event));
         }
@@ -82,6 +83,7 @@ namespace HkmpPouch
                     e.Event.FromPlayer = e.FromPlayer;
                     e.Event.ToPlayer = e.ToPlayer;
                     e.Event.SceneName = e.SceneName;
+                    e.Event.ExtraBytes = e.ExtraBytes;
                 }
                 Callback(e.Event);
                 handler -= OnEvent_do_Once_handler;
