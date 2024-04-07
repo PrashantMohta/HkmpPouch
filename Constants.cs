@@ -17,7 +17,7 @@
         /// <summary>
         /// Version of the HKMP Addon
         /// </summary>
-        public const string Version = "1.0.0"; // given to HKMP bump only when API is incompatible
+        public const string Version = "2.0.0"; // given to HKMP bump only when API is incompatible
 
         /// <summary>
         /// Version of the Pipe
